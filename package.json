@@ -5,11 +5,11 @@
 	"description":"Project view customization.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Smidgens/unity-pview.git"
+		"url": "git+https://github.com/Smidgenomics/unity-pview.git"
 	},
 	"author":{
-		"name":"Unnar Krist",
-		"url":"https://github.com/Smidgens"
+		"name":"Smidgenomics",
+		"url":"https://github.com/Smidgenomics"
 	},
 	"keywords":[
 		"unity",
@@ -18,5 +18,6 @@
 		"smidgenomics",
 		"unity-pview",
 		"tool"
-	]
+	],
+	"unity": "2022.3"
 }
