@@ -1,7 +1,7 @@
 {
 	"name":"com.smidgenomics.unity-pview",
 	"version":"0.1.0",
-	"displayName":"Project View",
+	"displayName":"SM Project View",
 	"description":"Project view customization.",
 	"repository": {
 		"type": "git",
