@@ -1,23 +1,26 @@
 {
-	"name":"com.smidgenomics.unity-pview",
-	"version":"0.1.0",
-	"displayName":"SM Project View",
-	"description":"Project view customization.",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Smidgenomics/unity-pview.git"
-	},
-	"author":{
-		"name":"Smidgenomics",
-		"url":"https://github.com/Smidgenomics"
-	},
-	"keywords":[
-		"unity",
-		"unity-editor",
-		"project-view",
-		"smidgenomics",
-		"unity-pview",
-		"tool"
-	],
-	"unity": "2022.3"
+  "name": "com.smidgenomics.unity-pview",
+  "version": "0.1.0",
+  "displayName": "SM Project View",
+  "description": "Project view customization. Customize context menus and project view icons.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smidgenomics/unity-pview.git"
+  },
+  "author": {
+    "name": "Smidgenomics",
+    "url": "https://github.com/Smidgenomics"
+  },
+  "keywords": [
+    "unity",
+    "unity-editor",
+    "project-view",
+    "smidgenomics",
+    "unity-pview",
+    "tool",
+    "icons"
+  ],
+  "unity": "2022.3",
+  "unityRelease": "62f2",
+  "documentationUrl": "https://github.com/Smidgenomics/unity-pview"
 }

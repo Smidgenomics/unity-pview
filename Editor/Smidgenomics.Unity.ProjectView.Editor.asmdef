@@ -8,7 +8,9 @@
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        "SM_PV.Newtonsoft.Json.dll"
+    ],
     "autoReferenced": false,
     "defineConstraints": [
         "!SM_PVIEW_0"

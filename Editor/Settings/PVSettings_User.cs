@@ -4,47 +4,44 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using UnityEditor;
 	using UnityEngine;
+	using UnityEngine.Internal;
+	using UnityEngine.Serialization;
 
-	[System.Flags]
-	internal enum PVDefaultFlags
+	[FilePath("UserSettings/" + PVConstants.SETTINGS_FILENAME + ".asset", FilePathAttribute.Location.ProjectFolder)]
+	[ExcludeFromPreset]
+	internal sealed class PVSettings_User : ScriptableSingleton<PVSettings_User>
 	{
-		None = 0,
-		Menu = 1,
-		Icons = 2,
-		All = ~0
-	}
+		[Header("Profiles (User)")]
+		[FieldLabel("Menu")]
+		[ProjectFile("*.pvm.json", "ProjectSettings/pview", "UserSettings/pview")]
+		[SerializeField] internal string _menuProfile;
 
-	[FilePath(Constants.SETTINGS_PATH_USER, FilePathAttribute.Location.ProjectFolder)]
-	internal class PVSettings_User : ScriptableSingleton<PVSettings_User>
-	{
-		public PVMenu Menu => _menu;
-		public PVIcons Icons => _icons;
-		public PVDefaultFlags Flags => _useDefaults;
+		[FieldLabel("Icons")]
+		[ProjectFile("*.pvi.json", "ProjectSettings/pview", "UserSettings/pview")]
+		[SerializeField] internal string _iconProfile;
+		
+		[Header("Use Unity Defaults")]
+		[FieldLabel(null)]
+		[ToggleEnum]
+		[HideInInspector]
+		[SerializeField] internal EDefaultViewFlags _useDefaults;
 
-		internal enum PVMenuBehaviour
-		{
-			Nothing,
-			UseUnityMenu,
-			UseProjectMenu
-		}
+		[Header("Base Behaviour")]
+		[FieldLabel("Menu")]
+		[SerializeField] internal EOverrideBehaviour _defaultMenu = EOverrideBehaviour.UserProfile;
+		[FieldLabel("Icons")]
+		[SerializeField] internal EOverrideBehaviour _defaultIcons = EOverrideBehaviour.UserProfile;
 
-		public bool UseDefaultMenu => _useDefaults.HasFlag(PVDefaultFlags.Menu);
-		public bool UseDefaultIcons => _useDefaults.HasFlag(PVDefaultFlags.Icons);
+		[FormerlySerializedAs("_keyboardModifiers")]
+		[Header("Modifiers (Context Menu)")]
+		[Expand(innerOnly:true)]
+		[SerializeField] internal MenuModifiers _modifierBehaviours = MenuModifiers.GetDefault();
 
-		[Header("Profiles")]
-		[SerializeField] internal PVMenu _menu = default;
-		[SerializeField] internal PVIcons _icons = default;
-
-		[Header("Settings")]
-		[SerializeField] internal PVDefaultFlags _useDefaults = default;
-
-		[Header("Shift/Ctrl")]
-		[SerializeField] internal PVMenuBehaviour _ctrlBehaviour = PVMenuBehaviour.UseUnityMenu;
-		[SerializeField] internal PVMenuBehaviour _shiftBehaviour = PVMenuBehaviour.UseProjectMenu;
-
-		[Space]
-		[EditorMenuItem("Assets")]
-		[SerializeField] internal string _testMenu = default;
+		[Header("Deprecated")]
+		[HideInInspector]
+		[SerializeField] internal PVMenu _menu;
+		[HideInInspector]
+		[SerializeField] internal PVIcons _icons;
 
 		public void Save()
 		{
@@ -63,45 +60,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using UnityEditor;
-	using System.Linq;
 
 	[CustomEditor(typeof(PVSettings_User))]
-	internal class _PVSettings_User : Editor
+	internal sealed class _PVSettings_User : _Inspector
 	{
-		public override void OnInspectorGUI()
-		{
-			EditorGUI.BeginChangeCheck();
-
-			serializedObject.UpdateIfRequiredOrScript();
-
-			foreach (var p in _props)
-			{
-				EditorGUILayout.PropertyField(p);
-			}
-
-			if (EditorGUI.EndChangeCheck() || serializedObject.hasModifiedProperties)
-			{
-				serializedObject.ApplyModifiedProperties();
-				((PVSettings_User)target).Save();
-			}
-		}
-
-		private SerializedProperty[] _props = { };
-
-		private static string[] PROP_NAMES =
-		{
-			nameof(PVSettings_User._menu),
-			nameof(PVSettings_User._icons),
-			nameof(PVSettings_User._useDefaults),
-			nameof(PVSettings_User._ctrlBehaviour),
-			nameof(PVSettings_User._shiftBehaviour),
-		};
-
-		private void OnEnable()
-		{
-			_props = PROP_NAMES.Select(name => serializedObject.FindProperty(name)).ToArray();
-		}
-
 		private void OnDisable()
 		{
 			// this might cause sync issues with undo/redo, not sure though
