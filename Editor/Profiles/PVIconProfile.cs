@@ -4,6 +4,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Runtime.Serialization;
 	using Newtonsoft.Json;
 	using UnityEditor;
@@ -17,9 +18,58 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public static PVIconProfile FromJSON(string data)
 		{
-			return JsonConvert.DeserializeObject<PVIconProfile>(data, GetSerializationSettings());
+			return FromJSON(data, true);
 		}
 
+		private static PVIconProfile FromJSON(string data, bool recursive)
+		{
+			var prof = JsonConvert.DeserializeObject<PVIconProfile>(data, GetSerializationSettings());
+
+			if (recursive && !string.IsNullOrEmpty(prof.baseProfile))
+			{
+				var baseData = ReadRelativeFile(prof.baseProfile);
+
+				if (baseData == null)
+				{
+					return prof;
+				}
+				
+				var bProfile = FromJSON(baseData, false);
+
+				if (bProfile.rules != null)
+				{
+					foreach (var (key, isGUID) in bProfile.keys)
+					{
+						if (!prof.keys.TryAdd(key, isGUID))
+						{
+							continue;
+						}
+						if (isGUID)
+						{
+							prof._guidRules.Add(key, bProfile._guidRules[key]);
+						}
+						else
+						{
+							prof._rules.Add(key, bProfile._rules[key]);
+						}
+						
+					}
+				}
+			}
+
+			return prof;
+		}
+
+		private static string ReadRelativeFile(string pPath)
+		{
+			var fPath = PVConstants.PROJECT_ROOT + "/" + pPath;
+			if (File.Exists(fPath))
+			{
+				return File.ReadAllText(fPath);
+			}
+			return null;
+		}
+		
 		private static JsonSerializerSettings GetSerializationSettings()
 		{
 			_cachedSerializationSettings ??= new JsonSerializerSettings
@@ -29,10 +79,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			};
 			return _cachedSerializationSettings;
 		}
-
 		private static JsonSerializerSettings _cachedSerializationSettings;
-		
-		
+
 		public bool TryGetIconByGUID(string guid, out LoadedIcon ico)
 		{
 			ico = default;
@@ -45,8 +93,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			var path = PathFromGUID(guid);
 			var isFolder = AssetDatabase.IsValidFolder(path);
-			foreach (var (f, v) in _rules)
+			foreach (var (k, val) in _rules)
 			{
+				var (f, v) = val;
 				if (isFolder && !f.IsFolder())
 				{
 					continue;
@@ -60,10 +109,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return false;
 		}
 
+		[JsonProperty("extends")] internal string baseProfile { get; private set; }
 		[JsonProperty] internal Dictionary<string, IconPrefs> rules { get; private set; } = new();
 
-		private readonly List<(IconFilter, IconPrefs)> _rules = new();
+		private readonly Dictionary<string,(IconFilter, IconPrefs)> _rules = new();
 		private readonly Dictionary<string, IconPrefs> _guidRules = new();
+		private readonly Dictionary<string, bool> keys = new();
+		
 
 		public struct LoadedIcon
 		{
@@ -86,14 +138,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				{
 					continue;
 				}
-
 				if (f is IconFilter_GUID)
 				{
+					keys[r] = true;
 					_guidRules[r] = v;
 				}
 				else
 				{
-					_rules.Add((f, v));
+					keys[r] = false;
+					_rules.Add(r, (f, v));
 				}
 			}
 		}

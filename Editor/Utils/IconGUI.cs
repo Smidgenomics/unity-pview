@@ -80,7 +80,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		// draw project view background color
 		private static void DrawBrowserColor(in Rect r) => EditorGUI.DrawRect(r, _BACKGROUND_COLOR);
 
-		// fragile hack to check if we're inside p.browser tree view
+		// hack to check if we're inside p.browser tree view
 		private static bool IsTreeViewPanel(in Rect rect) => (rect.x - 16) % 14 == 0;
 	}
 }
