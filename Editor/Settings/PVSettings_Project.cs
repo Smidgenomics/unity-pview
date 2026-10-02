@@ -4,7 +4,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using UnityEditor;
 	using UnityEngine;
-	using UnityEngine.Serialization;
 
 	[FilePath("ProjectSettings/" + PVConstants.SETTINGS_FILENAME + ".asset", FilePathAttribute.Location.ProjectFolder)]
 	[ExcludeFromPreset]
@@ -25,19 +24,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[HideInInspector]
 		[SerializeField] internal PVIcons _icons;
 		
-		public void Save()
-		{
-			Save(true);
-		}
+		public void Save() => Save(true);
 
-		private void OnEnable()
-		{
-			// unity would draw props as readonly otherwise
-			hideFlags &= ~HideFlags.NotEditable;
-		}
+		private void OnEnable() => hideFlags &= ~HideFlags.NotEditable;
 	}
 }
-
 
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
@@ -46,10 +37,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	[CustomEditor(typeof(PVSettings_Project))]
 	internal sealed class _PVSettings_Project : _Inspector
 	{
-		private void OnDisable()
-		{
-			// this might cause sync issues with undo/redo, not sure though
-			PVSettings_Project.instance.Save();
-		}
+		private void OnDisable() => PVSettings_User.instance.Save();
 	}
 }

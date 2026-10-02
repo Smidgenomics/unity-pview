@@ -4,7 +4,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using UnityEditor;
 	using UnityEngine;
-	using UnityEngine.Internal;
 	using UnityEngine.Serialization;
 
 	[FilePath("UserSettings/" + PVConstants.SETTINGS_FILENAME + ".asset", FilePathAttribute.Location.ProjectFolder)]
@@ -19,12 +18,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[FieldLabel("Icons")]
 		[ProjectFile("*.pvi.json", "ProjectSettings/pview", "UserSettings/pview")]
 		[SerializeField] internal string _iconProfile;
-		
-		[Header("Use Unity Defaults")]
-		[FieldLabel(null)]
-		[ToggleEnum]
-		[HideInInspector]
-		[SerializeField] internal EDefaultViewFlags _useDefaults;
 
 		[Header("Base Behaviour")]
 		[FieldLabel("Menu")]
@@ -37,22 +30,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[Expand(innerOnly:true)]
 		[SerializeField] internal MenuModifiers _modifierBehaviours = MenuModifiers.GetDefault();
 
-		[Header("Deprecated")]
-		[HideInInspector]
-		[SerializeField] internal PVMenu _menu;
-		[HideInInspector]
-		[SerializeField] internal PVIcons _icons;
+		public void Save() => Save(true);
 
-		public void Save()
-		{
-			Save(true);
-		}
-
-		private void OnEnable()
-		{
-			// unity would draw props as readonly otherwise
-			hideFlags &= ~HideFlags.NotEditable;
-		}
+		private void OnEnable() => hideFlags &= ~HideFlags.NotEditable;
 	}
 }
 
@@ -64,10 +44,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	[CustomEditor(typeof(PVSettings_User))]
 	internal sealed class _PVSettings_User : _Inspector
 	{
-		private void OnDisable()
-		{
-			// this might cause sync issues with undo/redo, not sure though
-			PVSettings_User.instance.Save();
-		}
+		private void OnDisable() => PVSettings_User.instance.Save();
 	}
 }

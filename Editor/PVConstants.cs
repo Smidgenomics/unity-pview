@@ -16,5 +16,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		// Name of settings files in Project and User settings
 		public const string SETTINGS_FILENAME = "SM_ProjectView";
 
+		// Path to menu items
+		public const string ROOT_MENU_PATH = "Help/Smidgenomics/Project View/";
+
+		// package.json
+		public const string PACKAGE_MANIFEST_GUID = "97184eaee0a5be44689988835a35edc8";
 	}
 }

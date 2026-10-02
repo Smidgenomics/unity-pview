@@ -1,6 +1,7 @@
 // smidgens @ github
 
 // ReSharper disable SuggestVarOrType_SimpleTypes
+
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
@@ -111,13 +112,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				{
 					behaviour = mods.ctrl.value;
 				}
-
-				if (e.shift && mods.shift.enabled)
+				else if (e.shift && mods.shift.enabled)
 				{
 					behaviour = mods.shift.value;
 				}
-			
-				if (e.alt && mods.alt.enabled)
+				else if (e.alt && mods.alt.enabled)
 				{
 					behaviour = mods.alt.value;
 				}

@@ -10,12 +10,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public bool enabled;
 		public T value;
-
-		public OptionalValue(T value)
-		{
-			this.value = default;
-			enabled = true;
-		}
 	}
 }
 
@@ -52,7 +46,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
-	using System.Reflection;
 	using UnityEditor;
 	using UnityEngine;
 
@@ -67,22 +60,24 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public override void OnGUI(Rect position, SerializedProperty prop, GUIContent label)
 		{
-			var lWidthAttr = fieldInfo.GetCustomAttribute<FieldLabelWidthAttribute>();
+			EditorGUI.BeginProperty(position, label, prop);
 			var eProp = prop.FindPropertyRelative(nameof(OptionalValue<byte>.enabled));
 			var vProp = prop.FindPropertyRelative(nameof(OptionalValue<byte>.value));
-			var lWidth = lWidthAttr?.width ?? 	EditorGUIUtility.labelWidth;
-			var toggleRect = position.SliceLeft(EditorGUIUtility.singleLineHeight);
-			position.SliceLeft(EditorGUIUtility.standardVerticalSpacing);
+			var lWidth = EditorGUIUtility.labelWidth;
 			var lRect = position.SliceLeft(lWidth);
+			position.SliceLeft(EditorGUIUtility.standardVerticalSpacing);
+			var toggleRect = lRect.SliceLeft(EditorGUIUtility.singleLineHeight);
 			position.SliceLeft(EditorGUIUtility.standardVerticalSpacing);
 			EditorGUI.PropertyField(toggleRect, eProp, GUIContent.none);
 			var tEnabled = GUI.enabled;
 			GUI.enabled = eProp.boolValue;
 			EditorGUI.LabelField(lRect, label);
-			EditorGUI.indentLevel--;
+			var tIndent = EditorGUI.indentLevel;
+			EditorGUI.indentLevel = 0;
 			EditorGUI.PropertyField(position, vProp, GUIContent.none);
-			EditorGUI.indentLevel++;
+			EditorGUI.indentLevel = tIndent;
 			GUI.enabled = tEnabled;
+			EditorGUI.EndProperty();
 		}
 	}
 	

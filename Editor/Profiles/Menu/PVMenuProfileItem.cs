@@ -12,7 +12,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[JsonProperty("icon")] public string iconGUID { get; internal set; }
 
 		[JsonProperty("label")] public string label { get; internal set; }
-		
+
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext context) => OnDeserialized();
 
