@@ -32,11 +32,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		private static void HandleMenu()
 		{
 			// not a context event
-			if (!Event.current.IsContextClick())
+			if (Event.current == null || Event.current.type != EventType.ContextClick)
 			{
 				return;
 			}
-
 			var ctx = GetActiveMenu(Event.current);
 			var m = ctx?.ToGenericMenu();
 

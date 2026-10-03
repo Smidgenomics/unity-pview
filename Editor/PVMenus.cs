@@ -23,7 +23,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			SettingsService.OpenProjectSettings("Project/" + PVConstants.SETTINGS_TAB_PATH);
 		}
 
-		[MenuItem(PVConstants.ROOT_MENU_PATH + "Documentation", false, _MENU_SORT)]
+		[MenuItem(PVConstants.ROOT_MENU_PATH + "Documentation", false, _MENU_SORT - 20)]
 		private static void OpenDocumentation() => Application.OpenURL(PackageManifest.Value.documentationUrl);
 
 		private static readonly Lazy<MinimalManifest> PackageManifest = new(() =>

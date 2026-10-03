@@ -10,12 +10,20 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	/// </summary>
 	internal static class IconGUI
 	{
-		// background color
-		private static readonly Color _BACKGROUND_COLOR = EditorGUIUtility.isProSkin
-		? new Color(0.2f, 0.2f, 0.2f) // gray blob
-		: new Color(0.745f, 0.745f, 0.745f); // grayish blob?
+		private static readonly SkinPick<Color> _BACKGROUND_COLOR = new
+		(
+			ParseColor(UnityConstants.COLOR_BROWSER_BG_L),
+			ParseColor(UnityConstants.COLOR_BROWSER_BG_D)
+		);
 
 		private const float _PV_ICON_LG = 88f;
+
+		private static Color ParseColor(string hexColor)
+		{
+			return ColorUtility.TryParseHtmlString(hexColor, out var c)
+			? c
+			: default;
+		}
 
 		public static void DrawIcon
 		(
@@ -50,7 +58,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				rect = new Rect(rect.x + 3f, rect.y, rect.width, rect.height);
 			}
 		}
-
 
 		// should rect be considered small
 		private static bool IsSmallish(in Rect rect) => rect.width > rect.height;

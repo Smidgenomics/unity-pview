@@ -42,16 +42,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return r2;
 		}
 
-		public static Rect SliceMin(this ref Rect r, bool flip = false)
-		{
-			if (r.width < r.height)
-			{
-				return !flip ? r.SliceTop(r.width) : r.SliceBottom(r.width);
-			}
-			return !flip ? r.SliceLeft(r.width) : r.SliceRight(r.width);
-		}
-		
-		
 		public static void Resize(this ref Rect r, in float s) => r.Resize(s, s, s, s);
 		public static void Resize(this ref Rect r, float h, in float v) => r.Resize(h, h, v, v);
 

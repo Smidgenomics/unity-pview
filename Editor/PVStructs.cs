@@ -16,6 +16,28 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
+	using UnityEditor;
+
+	[Serializable]
+	internal struct SkinPick<T>
+	{
+		public T Value => EditorGUIUtility.isProSkin ? _dValue : _lValue;
+
+		public SkinPick(T lightValue, T darkValue)
+		{
+			_dValue = darkValue;
+			_lValue = lightValue;
+		}
+
+		public static implicit operator T(SkinPick<T> v) => v.Value;
+
+		private T _dValue, _lValue;
+	}
+}
+
+namespace Smidgenomics.Unity.ProjectView.Editor
+{
+	using System;
 
 	[Serializable]
 	internal struct MenuModifiers

@@ -114,12 +114,5 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		
 		// m_TreeViewRect
 		private static FieldInfo _treeAreaRect;
-
-		/// <summary>
-		/// Background color for current editor theme
-		/// </summary>
-		public static readonly Color EditorBackgroundTint = EditorGUIUtility.isProSkin
-		? new Color(0.2f, 0.2f, 0.2f) // gray blob
-		: new Color(0.745f, 0.745f, 0.745f); // grayish blob?
 	}
 }

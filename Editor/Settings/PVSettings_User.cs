@@ -40,10 +40,22 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using UnityEditor;
+	using UnityEngine;
 
 	[CustomEditor(typeof(PVSettings_User))]
 	internal sealed class _PVSettings_User : _Inspector
 	{
+		protected override void OnBeforeFields()
+		{
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			if (GUILayout.Button("Project Settings"))
+			{
+				SettingsService.OpenProjectSettings("Project/" + PVConstants.SETTINGS_TAB_PATH);
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+
 		private void OnDisable() => PVSettings_User.instance.Save();
 	}
 }
