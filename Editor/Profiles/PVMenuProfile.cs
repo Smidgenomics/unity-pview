@@ -17,11 +17,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public MenuGenContext BuildMenu()
 		{
 			var ctx = new MenuGenContext(GetMenuItems());
-			if (root == null)
+			if (_root == null)
 			{
 				return ctx;
 			}
-			root.PopulateMenu(string.Empty, ctx);
+			_root.PopulateMenu(string.Empty, ctx);
 			return ctx;
 		}
 		
@@ -47,28 +47,25 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		private static JsonSerializerSettings _cachedSerializationSettings;
 
-		[JsonProperty("scope")] private string scopeRaw { get; set; }
-		[JsonProperty] internal string[] excludeMenus { get; set; } = Array.Empty<string>();
-		[JsonProperty] internal PVMenuProfileItem root { get; set; }
-		[JsonIgnore] public EOverrideScope scope { get; private set; }
-		
+		[JsonProperty("scope")] private string _scopeRaw { get; set; }
+		[JsonProperty("excludeMenus")] private string[] _excludeMenus { get; set; } = Array.Empty<string>();
+		[JsonProperty("root")] private MPItem_Group _root { get; set; }
+
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext context)
 		{
-			if (!Enum.TryParse(typeof(EOverrideScope), scopeRaw, out var val))
-			{
-				val = EOverrideScope.Project;
-			}
-			scope = (EOverrideScope)val;
 		}
 
 		private List<string> GetMenuItems()
 		{
+			var scope = _scopeRaw == "scene"
+			? EOverrideScope.Scene
+			: EOverrideScope.Project;
 			var mPath = scope == EOverrideScope.Project ? "Assets" : "GameObject";
 			List<string> items = new();
 			foreach (var path in UnityUtility.GetSubmenus(mPath))
 			{
-				if (!excludeMenus.MatchWildcard(path))
+				if (!_excludeMenus.MatchWildcard(path))
 				{
 					items.Add(path);
 				}

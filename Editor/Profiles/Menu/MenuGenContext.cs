@@ -12,11 +12,17 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		internal Texture2D icon;
 		internal Action fn;
 		internal Func<bool> enabledFn;
+		internal Func<bool> visibilityFn;
 		internal MenuGenNode root { get; private set; }
 		internal MenuGenNode parent { get; private set; }
 		internal string path { get; private set; }
 		internal int nestedCount { get; private set; }
 		private readonly List<MenuGenNode> _children = new();
+
+		public bool IsVisible()
+		{
+			return visibilityFn?.Invoke() ?? true;
+		}
 
 		public bool IsEnabled()
 		{
@@ -37,7 +43,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 			}
 			// leaf node
-			if (fn != null)
+			if (fn != null && IsVisible())
 			{
 				onNode.Invoke(path, this);
 			}
@@ -53,6 +59,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			this.name = name;
 			path = name;
 		}
+		
 
 		private MenuGenNode FindImmediateChild(string cName)
 		{
@@ -121,12 +128,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 	public sealed class MenuGenContext
 	{
-		public MenuGenContext(IReadOnlyList<string> menuItems)
+		internal MenuGenContext(IReadOnlyList<string> menuItems)
 		{
 			this.menuItems = menuItems;
 		}
 
-		public GenericMenu ToGenericMenu()
+		internal GenericMenu ToGenericMenu()
 		{
 			var m = new GenericMenu
 			{
@@ -163,11 +170,19 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			.AddNullChild();
 		}
 
-		public void AddItem(string path, Action fn, Func<bool> enabledFn = null, string icon = null)
+		public void AddItem
+		(
+			string path,
+			Action fn,
+			Func<bool> enabledFn = null,
+			Func<bool> visibilityFn = null,
+			string icon = null
+		)
 		{
 			var item = root.GetOrCreateChild(SanitizePath(path));
 			item.fn = fn;
 			item.enabledFn = enabledFn;
+			item.visibilityFn = visibilityFn;
 			if (!string.IsNullOrEmpty(icon))
 			{
 				item.icon = icons.GetIconOrCached(icon);

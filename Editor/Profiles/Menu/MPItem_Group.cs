@@ -4,19 +4,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
 	using Newtonsoft.Json;
-	using UnityEngine;
 
+	/// <summary>
+	/// Item that contains only child items
+	/// </summary>
 	[TypeAlias("group")]
 	internal sealed class MPItem_Group : PVMenuProfileItem
 	{
-		[JsonProperty("items")]
-		public PVMenuProfileItem[] children { get; internal set; } = Array.Empty<PVMenuProfileItem>();
-
-		protected override void OnDeserialized()
-		{
-			children ??= Array.Empty<PVMenuProfileItem>();
-		}
-
 		public override void PopulateMenu(string path, MenuGenContext ctx)
 		{
 			if (path != string.Empty)
@@ -27,7 +21,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				path += label;
 			}
-			foreach (var c in children)
+			foreach (var c in _children)
 			{
 				if (c == null)
 				{
@@ -39,5 +33,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 			}
 		}
+
+		protected override void OnDeserialized()
+		{
+			_children ??= Array.Empty<PVMenuProfileItem>();
+		}
+
+		[JsonProperty("items")] private PVMenuProfileItem[] _children { get; set; }
 	}
 }

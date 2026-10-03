@@ -32,6 +32,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			? Unsupported.GetSubmenusIncludingSeparators(menuPath)
 			: Unsupported.GetSubmenus(menuPath);
 		}
+		
+		// hack to check if we're inside p.browser tree view
+		// so far seems to work for: 2021,2022,2023,6
+		public static bool IsProjectTreeViewItem(in Rect rect) => (rect.x - 16) % 14 == 0;
 
 		public static EditorWindow GetProjectWindow()
 		{
@@ -72,7 +76,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			GetProjectBrowserField("m_ListAreaRect", ref _listAreaRectField);
 			GetProjectBrowserField("m_TreeViewRect", ref _treeAreaRect);
 			return default;
-
 		}
 
 		// note: only SOs supported atm

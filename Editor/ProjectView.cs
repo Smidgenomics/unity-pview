@@ -7,9 +7,20 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using System;
 	using UnityEngine;
 	using System.IO;
+	using UnityEditor;
 
 	internal static class ProjectView
 	{
+		public static void OpenUserPrefs()
+		{
+			SettingsService.OpenUserPreferences("Preferences/" + PVConstants.SETTINGS_TAB_PATH);
+		}
+
+		public static void OpenProjectPrefs()
+		{
+			SettingsService.OpenProjectSettings("Project/" + PVConstants.SETTINGS_TAB_PATH);
+		}
+		
 		public static void OnBrowserGUI(string guid, Rect pos)
 		{
 			DrawIcons(pos, guid);

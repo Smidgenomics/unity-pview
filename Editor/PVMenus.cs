@@ -7,24 +7,17 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using UnityEditorInternal;
 	using UnityEngine;
 
+	// menu items
 	internal static class PVMenus
 	{
-		private const int _MENU_SORT = 150;
-
-		[MenuItem(PVConstants.ROOT_MENU_PATH + "User Settings", false, _MENU_SORT)]
-		private static void OpenUserSettings()
-		{
-			SettingsService.OpenUserPreferences("Preferences/" + PVConstants.SETTINGS_TAB_PATH);
-		}
-		
-		[MenuItem(PVConstants.ROOT_MENU_PATH + "Project Settings", false, _MENU_SORT)]
-		private static void OpenProjectSettings()
-		{
-			SettingsService.OpenProjectSettings("Project/" + PVConstants.SETTINGS_TAB_PATH);
-		}
-
-		[MenuItem(PVConstants.ROOT_MENU_PATH + "Documentation", false, _MENU_SORT - 20)]
+		[MenuItem(PVConstants.ROOT_MENU_PATH + "Documentation", false, PVConstants.MENU_SORT - 20)]
 		private static void OpenDocumentation() => Application.OpenURL(PackageManifest.Value.documentationUrl);
+		
+		[MenuItem(PVConstants.ROOT_MENU_PATH + "User Settings", false, PVConstants.MENU_SORT)]
+		private static void OpenUserSettings() => ProjectView.OpenUserPrefs();
+
+		[MenuItem(PVConstants.ROOT_MENU_PATH + "Project Settings", false, PVConstants.MENU_SORT)]
+		private static void OpenProjectSettings() => ProjectView.OpenProjectPrefs();
 
 		private static readonly Lazy<MinimalManifest> PackageManifest = new(() =>
 		{

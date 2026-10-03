@@ -5,44 +5,23 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using UnityEditor;
 	using UnityEngine;
 
+	/// <summary>
+	/// Project settings file
+	/// </summary>
 	[FilePath("ProjectSettings/" + PVConstants.SETTINGS_FILENAME + ".asset", FilePathAttribute.Location.ProjectFolder)]
 	[ExcludeFromPreset]
-	internal sealed class PVSettings_Project : ScriptableSingleton<PVSettings_Project>
+	internal sealed class PVSettings_Project : SettingsAsset<PVSettings_Project>
 	{
-		[Header("Default Profiles")]
-		[FieldLabel("Project Menu")]
+		[Header("Project Browser")]
+		[FieldLabel("Context Menu")]
 		[ProjectFile("*.pvm.json", "ProjectSettings/pview")]
 		[SerializeField] internal string _menuProfile;
-		
-		[FieldLabel("Project Icons")]
+
+		[FieldLabel("Icons")]
 		[ProjectFile("*.pvi.json", "ProjectSettings/pview")]
 		[SerializeField] internal string _iconProfile;
 
-		public void Save() => Save(true);
-
-		private void OnEnable() => hideFlags &= ~HideFlags.NotEditable;
-	}
-}
-
-namespace Smidgenomics.Unity.ProjectView.Editor
-{
-	using UnityEditor;
-	using UnityEngine;
-
-	[CustomEditor(typeof(PVSettings_Project))]
-	internal sealed class _PVSettings_Project : _Inspector
-	{
-		protected override void OnBeforeFields()
-		{
-			EditorGUILayout.BeginHorizontal();
-			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("User Settings"))
-			{
-				SettingsService.OpenUserPreferences("Preferences/" + PVConstants.SETTINGS_TAB_PATH);
-			}
-			EditorGUILayout.EndHorizontal();
-		}
-
-		private void OnDisable() => PVSettings_Project.instance.Save();
+		[StaticAction("User Settings")]
+		private static void OpenUserSettings() => ProjectView.OpenUserPrefs();
 	}
 }

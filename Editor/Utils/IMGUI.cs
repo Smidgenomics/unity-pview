@@ -16,6 +16,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			in Color color
 		)
 		{
+			if (!tex)
+			{
+				return;
+			}
 			var tc = GUI.color;
 			GUI.color = color;
 

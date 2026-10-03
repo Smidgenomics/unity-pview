@@ -21,66 +21,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return FromJSON(data, true);
 		}
 
-		private static PVIconProfile FromJSON(string data, bool recursive)
-		{
-			var prof = JsonConvert.DeserializeObject<PVIconProfile>(data, GetSerializationSettings());
-
-			if (recursive && !string.IsNullOrEmpty(prof.baseProfile))
-			{
-				var baseData = ReadRelativeFile(prof.baseProfile);
-
-				if (baseData == null)
-				{
-					return prof;
-				}
-				
-				var bProfile = FromJSON(baseData, false);
-
-				if (bProfile.rules != null)
-				{
-					foreach (var (key, isGUID) in bProfile.keys)
-					{
-						if (!prof.keys.TryAdd(key, isGUID))
-						{
-							continue;
-						}
-						if (isGUID)
-						{
-							prof._guidRules.Add(key, bProfile._guidRules[key]);
-						}
-						else
-						{
-							prof._rules.Add(key, bProfile._rules[key]);
-						}
-						
-					}
-				}
-			}
-
-			return prof;
-		}
-
-		private static string ReadRelativeFile(string pPath)
-		{
-			var fPath = PVConstants.PROJECT_ROOT + "/" + pPath;
-			if (File.Exists(fPath))
-			{
-				return File.ReadAllText(fPath);
-			}
-			return null;
-		}
-		
-		private static JsonSerializerSettings GetSerializationSettings()
-		{
-			_cachedSerializationSettings ??= new JsonSerializerSettings
-			{
-				TypeNameHandling = TypeNameHandling.All,
-				MissingMemberHandling = MissingMemberHandling.Ignore,
-			};
-			return _cachedSerializationSettings;
-		}
-		private static JsonSerializerSettings _cachedSerializationSettings;
-
 		public bool TryGetIconByGUID(string guid, out LoadedIcon ico)
 		{
 			ico = default;
@@ -93,7 +33,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			var path = PathFromGUID(guid);
 			var isFolder = AssetDatabase.IsValidFolder(path);
-			foreach (var (k, val) in _rules)
+			foreach (var (k, val) in _filterRules)
 			{
 				var (f, v) = val;
 				if (isFolder && !f.IsFolder())
@@ -109,13 +49,71 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return false;
 		}
 
-		[JsonProperty("extends")] internal string baseProfile { get; private set; }
-		[JsonProperty] internal Dictionary<string, IconPrefs> rules { get; private set; } = new();
+		private static PVIconProfile FromJSON(string data, bool recursive)
+		{
+			var prof = JsonConvert.DeserializeObject<PVIconProfile>(data, GetSerializationSettings());
 
-		private readonly Dictionary<string,(IconFilter, IconPrefs)> _rules = new();
+			if (recursive && !string.IsNullOrEmpty(prof._baseProfile))
+			{
+				var baseData = ReadRelativeFile(prof._baseProfile);
+
+				if (baseData == null)
+				{
+					return prof;
+				}
+				
+				var bProfile = FromJSON(baseData, false);
+
+				if (bProfile._rules != null)
+				{
+					foreach (var (key, isGUID) in bProfile._keys)
+					{
+						if (!prof._keys.TryAdd(key, isGUID))
+						{
+							continue;
+						}
+						if (isGUID)
+						{
+							prof._guidRules.Add(key, bProfile._guidRules[key]);
+						}
+						else
+						{
+							prof._filterRules.Add(key, bProfile._filterRules[key]);
+						}
+						
+					}
+				}
+			}
+			return prof;
+		}
+
+		private static string ReadRelativeFile(string pPath)
+		{
+			var fPath = PVConstants.PROJECT_ROOT + "/" + pPath;
+			if (File.Exists(fPath))
+			{
+				return File.ReadAllText(fPath);
+			}
+			return null;
+		}
+
+		private static JsonSerializerSettings GetSerializationSettings()
+		{
+			_cachedSerializationSettings ??= new JsonSerializerSettings
+			{
+				TypeNameHandling = TypeNameHandling.All,
+				MissingMemberHandling = MissingMemberHandling.Ignore,
+			};
+			return _cachedSerializationSettings;
+		}
+		private static JsonSerializerSettings _cachedSerializationSettings;
+
+		[JsonProperty("extends")] private string _baseProfile { get; set; }
+		[JsonProperty("rules")] private Dictionary<string, IconPrefs> _rules { get; set; } = new();
+
+		private readonly Dictionary<string,(IconFilter, IconPrefs)> _filterRules = new();
 		private readonly Dictionary<string, IconPrefs> _guidRules = new();
-		private readonly Dictionary<string, bool> keys = new();
-		
+		private readonly Dictionary<string, bool> _keys = new();
 
 		public struct LoadedIcon
 		{
@@ -127,7 +125,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext ctx)
 		{
-			foreach (var (r,v) in rules)
+			foreach (var (r,v) in _rules)
 			{
 				if (v == null || !v.loadedIcon.icon)
 				{
@@ -140,50 +138,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 				if (f is IconFilter_GUID)
 				{
-					keys[r] = true;
+					_keys[r] = true;
 					_guidRules[r] = v;
 				}
 				else
 				{
-					keys[r] = false;
-					_rules.Add(r, (f, v));
+					_keys[r] = false;
+					_filterRules.Add(r, (f, v));
 				}
 			}
-		}
-
-		private static Color ParseHexColor(string str, Color defValue)
-		{
-			return ColorUtility.TryParseHtmlString(str, out var outColor)
-			? outColor
-			: defValue;
-		}
-
-		private static float ParseFloat(string str, float defValue)
-		{
-			return float.TryParse(str.Trim(), out var outVal)
-			? outVal
-			: defValue;
-		}
-
-		private static Rect ParseRect(string str, Rect defValue)
-		{
-			if (string.IsNullOrEmpty(str))
-			{
-				return defValue;
-			}
-			
-			var vals = str.Split(',');
-
-			if (vals.Length != 4)
-			{
-				return defValue;
-			}
-			Rect outVal = default;
-			outVal.x = ParseFloat(vals[0], defValue.x);
-			outVal.x = ParseFloat(vals[1], defValue.y);
-			outVal.width = ParseFloat(vals[2], defValue.width);
-			outVal.height = ParseFloat(vals[3], defValue.height);
-			return outVal;
 		}
 
 		private static Texture2D LoadTexture(string guidOrName)
@@ -194,7 +157,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			return EditorGUIUtility.IconContent(guidOrName)?.image as Texture2D;
 		}
-		
+
 		internal sealed class IconPrefs
 		{
 			[JsonProperty("icon")] private string _iconGUID;
@@ -207,8 +170,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				loadedIcon = new LoadedIcon()
 				{
-					tint = ParseHexColor(_tint, Color.white),
-					coords = ParseRect(_coords, new Rect(0f, 0f, 1f, 1f)),
+					tint = PVParse.ParseHexColor(_tint, Color.white),
+					coords = PVParse.ParseRect(_coords, new Rect(0f, 0f, 1f, 1f)),
 					icon = LoadTexture(_iconGUID),
 				};
 			}

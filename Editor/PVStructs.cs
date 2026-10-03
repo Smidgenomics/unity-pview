@@ -15,11 +15,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
-	using System;
 	using UnityEditor;
 
-	[Serializable]
-	internal struct SkinPick<T>
+	// selects value based on editor skin
+	internal readonly struct SkinPick<T>
 	{
 		public T Value => EditorGUIUtility.isProSkin ? _dValue : _lValue;
 
@@ -30,8 +29,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		}
 
 		public static implicit operator T(SkinPick<T> v) => v.Value;
+		public static implicit operator SkinPick<T>((T, T) val) => new(val.Item1, val.Item2);
 
-		private T _dValue, _lValue;
+		private readonly T _dValue, _lValue;
 	}
 }
 

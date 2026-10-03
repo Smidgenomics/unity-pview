@@ -6,7 +6,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System.Collections.Generic;
 	using UnityEditor;
-	using UnityEditor.UIElements;
 	using UnityEngine;
 	using UnityEngine.UIElements;
 
@@ -16,7 +15,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public override VisualElement CreateInspectorGUI()
 		{
 			var root = new IMGUIContainer();
-			// not sure if this is entirely safe...
+			// not sure if this is entirely robust, we shall see...
 			root.onGUIHandler = OnInspectorGUI;
 			return root;
 		}
@@ -34,21 +33,22 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 				serializedObject.ApplyModifiedProperties();
 			}
-
 			OnAfterFields();
 		}
 
 		private IReadOnlyList<SerializedProperty> _props;
 
-		protected virtual void OnBeforeFields()
+		protected static void DrawSeparatorIMGUI()
 		{
-			
+			GUILayout.Space(EditorGUIUtility.standardVerticalSpacing);
+			var r = EditorGUILayout.GetControlRect(GUILayout.Height(1f));
+			EditorGUI.DrawRect(r, UnityConstants.BorderColor);
+			GUILayout.Space(EditorGUIUtility.standardVerticalSpacing);
 		}
+
+		protected virtual void OnBeforeFields(){}
 		
-		protected virtual void OnAfterFields()
-		{
-			
-		}
+		protected virtual void OnAfterFields(){}
 
 		protected virtual void OnEnable()
 		{
@@ -64,6 +64,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 			}
 			_props = props;
+		}
+
+		protected virtual void OnDisable()
+		{
+			
 		}
 	}
 

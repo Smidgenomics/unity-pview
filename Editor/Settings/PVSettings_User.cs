@@ -4,14 +4,16 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using UnityEditor;
 	using UnityEngine;
-	using UnityEngine.Serialization;
 
+	/// <summary>
+	/// User settings file
+	/// </summary>
 	[FilePath("UserSettings/" + PVConstants.SETTINGS_FILENAME + ".asset", FilePathAttribute.Location.ProjectFolder)]
 	[ExcludeFromPreset]
-	internal sealed class PVSettings_User : ScriptableSingleton<PVSettings_User>
+	internal sealed class PVSettings_User : SettingsAsset<PVSettings_User>
 	{
 		[Header("Profiles (User)")]
-		[FieldLabel("Menu")]
+		[FieldLabel("Context Menu")]
 		[ProjectFile("*.pvm.json", "ProjectSettings/pview", "UserSettings/pview")]
 		[SerializeField] internal string _menuProfile;
 
@@ -25,37 +27,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[FieldLabel("Icons")]
 		[SerializeField] internal EOverrideBehaviour _defaultIcons = EOverrideBehaviour.UserProfile;
 
-		[FormerlySerializedAs("_keyboardModifiers")]
 		[Header("Modifiers (Context Menu)")]
 		[Expand(innerOnly:true)]
 		[SerializeField] internal MenuModifiers _modifierBehaviours = MenuModifiers.GetDefault();
 
-		public void Save() => Save(true);
-
-		private void OnEnable() => hideFlags &= ~HideFlags.NotEditable;
-	}
-}
-
-
-namespace Smidgenomics.Unity.ProjectView.Editor
-{
-	using UnityEditor;
-	using UnityEngine;
-
-	[CustomEditor(typeof(PVSettings_User))]
-	internal sealed class _PVSettings_User : _Inspector
-	{
-		protected override void OnBeforeFields()
-		{
-			EditorGUILayout.BeginHorizontal();
-			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("Project Settings"))
-			{
-				SettingsService.OpenProjectSettings("Project/" + PVConstants.SETTINGS_TAB_PATH);
-			}
-			EditorGUILayout.EndHorizontal();
-		}
-
-		private void OnDisable() => PVSettings_User.instance.Save();
+		[StaticAction("Project Settings")]
+		private static void OpenProjectSettings() => ProjectView.OpenProjectPrefs();
 	}
 }

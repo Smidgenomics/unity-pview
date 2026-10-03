@@ -10,24 +10,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	[TypeAlias("menu")]
 	internal sealed class MPItem_MenuItem : PVMenuProfileItem
 	{
-		// either single item or wildcard pattern
-		[JsonProperty] public string path { get; internal set; }
-
-		private Regex _regex;
-
-		protected override void OnDeserialized()
-		{
-			path ??= string.Empty;
-			_regex = TryGetRegex(path);
-			if (_regex == null && IsPattern(path))
-			{
-				_regex = new Wildcard(path);
-			}
-		}
-
 		public override void PopulateMenu(string currentPath, MenuGenContext context)
 		{
-			if (string.IsNullOrEmpty(path))
+			if (string.IsNullOrEmpty(_path))
 			{
 				return;
 			}
@@ -52,15 +37,29 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 					}
 				}
 			}
-			else // single itemj
+			else // single item
 			{
-				// default to menu name if label is empty
-				var mLabel = string.IsNullOrEmpty(label)
-				? path[(path.LastIndexOf('/') + 1)..]
-				: label;
-				AddMenuItem(currentPath + mLabel, path, context);
+				if (IsPathValid(_path, context))
+				{
+					// default to menu name if label is empty
+					var mLabel = string.IsNullOrEmpty(label)
+					? _path[(_path.LastIndexOf('/') + 1)..]
+					: label;
+					AddMenuItem(currentPath + mLabel, _path, context);
+				}
 			}
 		}
+
+		protected override void OnDeserialized()
+		{
+			_path ??= string.Empty;
+			_regex = TryGetRegex(_path);
+		}
+
+		// either single item or wildcard pattern
+		[JsonProperty("path")] private string _path { get; set; }
+
+		private Regex _regex;
 
 		private static Regex TryGetRegex(string str)
 		{
@@ -68,12 +67,23 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				return new Regex(str.Substring(2));
 			}
+			if (str.Contains('*'))
+			{
+				return new Wildcard(str);
+			}
 			return null;
 		}
 
-		private static bool IsPattern(string str)
+		private static bool IsPathValid(string path, MenuGenContext ctx)
 		{
-			return str.Contains('*');
+			foreach (var mi in ctx.menuItems)
+			{
+				if (mi == path)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private static void AddMenuItem(string mPath, string unityMenuPath, MenuGenContext ctx)

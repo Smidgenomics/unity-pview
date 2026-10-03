@@ -9,9 +9,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	public abstract class PVMenuProfileItem
 	{
 		// note: not used yet as UnityEditor.GenericMenu (used by current impl) doesn't support icons
-		[JsonProperty("icon")] public string iconGUID { get; internal set; }
+		[JsonProperty("icon")] public string iconGUID { get; private set; }
 
-		[JsonProperty("label")] public string label { get; internal set; }
+		[JsonProperty("label")] public string label { get; private set; }
 
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext context) => OnDeserialized();

@@ -3,6 +3,7 @@
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Reflection;
 	using Newtonsoft.Json;
 	using UnityEditor;
@@ -12,20 +13,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	[TypeAlias("create")]
 	internal sealed class MPItem_CreateAsset : PVMenuProfileItem
 	{
-		[JsonProperty] public string classType { get; internal set; } = string.Empty;
-		
-		// if true, will add a create option for every subtype
-		[JsonProperty] public bool subClasses { get; internal set; }
-
-		private Type _type;
-
-		protected override void OnDeserialized()
-		{
-			_type = classType.IsGUID32()
-			? GetMonoType(classType)
-			: Type.GetType(classType);
-		}
-
 		public override void PopulateMenu(string path, MenuGenContext context)
 		{
 			if (_type == null)
@@ -38,45 +25,70 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				path += "/";
 			}
 
-			if (!subClasses)
+			foreach (var (lb, fn) in GetCreateOptions())
 			{
-				var lb = base.label;
-
-				if (string.IsNullOrEmpty(lb))
-				{
-					lb = GetTypeCreateLabel(_type);
-				}
-				context.AddItem(path + lb, CreateAsset);
-			}
-			else
-			{
-				var groupLabel = string.IsNullOrEmpty(label)
-				? GetTypeCreateLabel(_type)
-				: label;
-
-				foreach (var subType in TypeCache.GetTypesDerivedFrom(_type))
-				{
-					if (!CanCreateType(subType))
-					{
-						continue;
-					}
-					context.AddItem(path + groupLabel + "/" + GetTypeCreateLabel(subType), () =>
-					{
-						UnityUtility.StartCreatingAsset(subType);
-					});
-				}
+				context.AddItem(path + lb, fn);
 			}
 		}
+		
+		protected override void OnDeserialized()
+		{
+			_type = _classType.IsGUID32()
+			? GetMonoType(_classType)
+			: Type.GetType(_classType);
+		}
 
+		[JsonProperty("classType")] private string _classType;
+		[JsonProperty("subClasses")] private bool _subClasses; // if true, will add a create option for every subtype
+
+		private Type _type;
+
+		private IReadOnlyList<(string, Action)> _options;
+
+		private IReadOnlyList<(string, Action)> GetCreateOptions()
+		{
+			if (_options != null)
+			{
+				return _options;
+			}
+			List<(string, Action)> l = new();
+			_options = l;
+			if (_type == null)
+			{
+				return _options;
+			}
+
+			if (!_subClasses)
+			{
+				l.Add((GetTypeCreateLabel(_type), () => UnityUtility.StartCreatingAsset(_type)));
+				return _options;
+			}
+
+			var groupLabel = string.IsNullOrEmpty(label)
+			? GetTypeCreateLabel(_type)
+			: label;
+
+			foreach (var subType in TypeCache.GetTypesDerivedFrom(_type))
+			{
+				if (!CanCreateType(subType))
+				{
+					continue;
+				}
+				l.Add((groupLabel + "/" + GetTypeCreateLabel(subType), () => UnityUtility.StartCreatingAsset(subType)));
+			}
+			return _options;
+		}
+		
 		private static bool CanCreateType(Type type)
 		{
-			return !type.IsAbstract
+			return type != null
+			&& !type.IsAbstract
 			&& typeof(UnityEngine.Object).IsAssignableFrom(type)
 			&& (type.GetConstructor(Type.EmptyTypes) != null)
 			&& !type.IsDefined(typeof(ObsoleteAttribute));
 		}
 
-		private Type GetMonoType(string guid)
+		private static Type GetMonoType(string guid)
 		{
 			var ms = AssetDatabase.LoadAssetAtPath<MonoScript>(AssetDatabase.GUIDToAssetPath(guid));
 			return ms?.GetClass();
@@ -96,11 +108,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				return menuPath.Substring(menuPath.LastIndexOf('/') + 1);
 			}
 			return ObjectNames.NicifyVariableName(type.Name);
-		}
-
-		private void CreateAsset()
-		{
-			UnityUtility.StartCreatingAsset(_type);
 		}
 	}
 }
