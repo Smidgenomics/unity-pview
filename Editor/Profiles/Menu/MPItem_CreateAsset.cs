@@ -30,7 +30,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				context.AddItem(path + lb, fn);
 			}
 		}
-		
+
 		protected override void OnDeserialized()
 		{
 			_type = _classType.IsGUID32()
@@ -38,11 +38,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			: Type.GetType(_classType);
 		}
 
+		[InjectVariables]
 		[JsonProperty("classType")] private string _classType;
 		[JsonProperty("subClasses")] private bool _subClasses; // if true, will add a create option for every subtype
-
 		private Type _type;
-
 		private IReadOnlyList<(string, Action)> _options;
 
 		private IReadOnlyList<(string, Action)> GetCreateOptions()
@@ -81,8 +80,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		
 		private static bool CanCreateType(Type type)
 		{
-			return type != null
-			&& !type.IsAbstract
+			return type is { IsAbstract: false }
 			&& typeof(UnityEngine.Object).IsAssignableFrom(type)
 			&& (type.GetConstructor(Type.EmptyTypes) != null)
 			&& !type.IsDefined(typeof(ObsoleteAttribute));

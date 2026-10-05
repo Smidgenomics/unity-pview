@@ -176,8 +176,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 						cache = new CachedLoad<T>(file, lastEdit, factory.Invoke(File.ReadAllText(absFilePath)));
 						return cache.data;
 					}
-					catch
+					catch (Exception e)
 					{
+						Debug.LogError(e);
 						Debug.LogError($"Error parsing profile at '{absFilePath}': Using defaults");
 						cache = new CachedLoad<T>(file, lastEdit, default);
 					}

@@ -6,6 +6,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using System.Reflection;
 	using UnityEngine;
 
+	// misc parse utils
 	internal static class PVParse
 	{
 		public static Color ParseHexColor(string hexColor, Color dValue)
@@ -42,7 +43,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			outVal.height = ParseFloat(vals[3], defValue.height);
 			return outVal;
 		}
-		
+
 		public static MethodInfo ParseStaticMethodRef(string mRef, Type rType, Type[] pTypes)
 		{
 			mRef ??= string.Empty;
@@ -61,8 +62,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				return null;
 			}
 			const BindingFlags bf = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-			var m = type.GetMethod(mName, bf, null, pTypes, null);
-			if (m == null || m.ReturnType != rType)
+
+			var m = pTypes != null
+			? type.GetMethod(mName, bf, null, pTypes, null)
+			: type.GetMethod(mName, bf);
+
+			if (m == null || (rType != null && m.ReturnType != rType))
 			{
 				return null;
 			}

@@ -34,6 +34,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 		}
 
+		public override void OnInit(MenuGenContext context)
+		{
+			base.OnInit(context);
+			foreach (var c in _children)
+			{
+				c?.OnInit(context);
+			}
+		}
+
 		protected override void OnDeserialized()
 		{
 			_children ??= Array.Empty<PVMenuProfileItem>();

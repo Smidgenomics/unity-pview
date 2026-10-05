@@ -13,11 +13,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public override void PopulateMenu(string currentPath, MenuGenContext context)
 		{
-			if (string.IsNullOrEmpty(_path))
-			{
-				return;
-			}
-
 			if (currentPath.Length > 0)
 			{
 				currentPath += "/";
@@ -51,14 +46,23 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 		}
 
-		protected override void OnDeserialized()
+		public override void OnInit(MenuGenContext context)
 		{
+			base.OnInit(context);
 			_path ??= string.Empty;
 			_regex = TryGetRegex(_path);
+			_hideDisabled |= context.GetVariableOrDefault("hideDisabledMenus", false);
+		}
+
+		protected override void OnDeserialized()
+		{
+			
 		}
 
 		// either single item or wildcard pattern
+		[field:InjectVariables]
 		[JsonProperty("path")] private string _path { get; set; }
+		[JsonProperty("hideDisabled")] private bool _hideDisabled;
 
 		private Regex _regex;
 
@@ -87,19 +91,19 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return false;
 		}
 
-		private static void AddMenuItem(string mPath, string unityMenuPath, MenuGenContext ctx)
+		private static bool GetTrue() => true;
+
+		private void AddMenuItem(string mPath, string unityMenuPath, MenuGenContext ctx)
 		{
-			ctx.AddItem(mPath, CreateMenuAction(unityMenuPath), CreateMenuPredicate(unityMenuPath));
+			var enableFn = CreateMenuPredicate(unityMenuPath);
+			Func<bool> visFn = _hideDisabled
+			? enableFn.Invoke
+			: GetTrue;
+			ctx.AddItem(mPath, CreateMenuAction(unityMenuPath), enableFn, visFn);
 		}
 
-		private static Action CreateMenuAction(string menuItem)
-		{
-			return () => UnityUtility.ExecuteMenu(menuItem);
-		}
+		private static Action CreateMenuAction(string menuItem) => () => UnityUtility.ExecuteMenu(menuItem);
 
-		private static Func<bool> CreateMenuPredicate(string menuItem)
-		{
-			return () => UnityUtility.CanExecuteMenu(menuItem);
-		}
+		private static Func<bool> CreateMenuPredicate(string menuItem) => () => UnityUtility.CanExecuteMenu(menuItem);
 	}
 }

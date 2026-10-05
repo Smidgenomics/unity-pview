@@ -6,6 +6,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using System.Collections.Generic;
 	using System.Runtime.Serialization;
 	using Newtonsoft.Json;
+	using UnityEngine;
 
 	/// <summary>
 	/// JSON file, menu config
@@ -16,10 +17,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public MenuGenContext BuildMenu()
 		{
-			var ctx = new MenuGenContext(GetMenuItems());
+			var ctx = new MenuGenContext(GetMenuItems(), _variables);
 			if (_root == null)
 			{
 				return ctx;
+			}
+
+			if (!_init)
+			{
+				_root.OnInit(ctx);
 			}
 			_root.PopulateMenu(string.Empty, ctx);
 			return ctx;
@@ -49,7 +55,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		[JsonProperty("scope")] private string _scopeRaw { get; set; }
 		[JsonProperty("excludeMenus")] private string[] _excludeMenus { get; set; } = Array.Empty<string>();
+		[JsonProperty("variables")] private Dictionary<string, object> _variables;
 		[JsonProperty("root")] private MPItem_Group _root { get; set; }
+
+		private bool _init;
 
 		[OnDeserialized]
 		private void OnDeserialized(StreamingContext context)

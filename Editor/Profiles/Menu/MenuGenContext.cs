@@ -115,22 +115,22 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return currentNode;
 		}
 	}
-
-
 }
 
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Reflection;
 	using UnityEditor;
 	using UnityEngine;
 
 	public sealed class MenuGenContext
 	{
-		internal MenuGenContext(IReadOnlyList<string> menuItems)
+		internal MenuGenContext(IReadOnlyList<string> menuItems, Dictionary<string,object> variables)
 		{
 			this.menuItems = menuItems;
+			_variables = variables ?? new Dictionary<string, object>();
 		}
 
 		internal GenericMenu ToGenericMenu()
@@ -160,7 +160,91 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 				m.AddItem(new GUIContent(n.path), false, () => n.fn.Invoke());
 			});
+
+			if (m.GetItemCount() == 0)
+			{
+				m.AddDisabledItem(new GUIContent("No options"), false);
+			}
+			
 			return m;
+		}
+
+		// injects variables to string fields marked with [InjectVariables]
+		public void InjectVariables<T>(T ob) where T : class
+		{
+			var oType = ob.GetType();
+			if (!_INJECT_FIELDS.TryGetValue(oType, out var fList))
+			{
+				var fields = oType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				var l = new List<FieldInfo>();
+				fList = l;
+				_INJECT_FIELDS.Add(oType, l);
+				foreach (var f in fields)
+				{
+					if (!f.IsDefined(typeof(InjectVariablesAttribute)) || f.FieldType != typeof(string))
+					{
+						continue;
+					}
+					l.Add(f);
+				}
+			}
+			foreach (var f in fList)
+			{
+				InjectVariables(f, ob);
+			}
+		}
+
+		private void InjectVariables(FieldInfo field, object target)
+		{
+			var currVal = (string)field.GetValue(target);
+			if (currVal == null || !currVal.Contains('$'))
+			{
+				return;
+			}
+			var newVal = InjectVariables(currVal);
+			if (newVal != currVal)
+			{
+				field.SetValue(target, newVal);
+			}
+		}
+
+		private readonly Dictionary<Type, IReadOnlyList<FieldInfo>> _INJECT_FIELDS = new();
+
+		// formats string by inserting context variables
+		public string InjectVariables(string str)
+		{
+			if (str == null || !str.Contains('$'))
+			{
+				return str;
+			}
+			// brute force, works for now
+			foreach (var (k, v) in _variables)
+			{
+				if (!str.Contains('$'))
+				{
+					break;
+				}
+				str = str.Replace($"${{{k}}}", v.ToString());
+			}
+			return str;
+		}
+
+		// syntactic sugar, returns default value if variable is not found
+		public T GetVariableOrDefault<T>(string name, T dValue)
+		{
+			return TryGetVariable<T>(name, out var v) ? v : dValue;
+		}
+
+		// looks up variable 
+		public bool TryGetVariable<T>(string name, out T value)
+		{
+			if (_variables.TryGetValue(name, out var obVal) && obVal is T val)
+			{
+				value = val;
+				return true;
+			}
+			value = default;
+			return false;
 		}
 
 		public void AddDivider(string path)
@@ -192,6 +276,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public IReadOnlyList<string> menuItems { get; }
 		internal readonly MenuGenNode root = new(string.Empty);
 		internal readonly IconStore icons = new ();
+
+		private readonly IReadOnlyDictionary<string, object> _variables;
 
 		private static string SanitizePath(string path)
 		{
