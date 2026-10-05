@@ -7,7 +7,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using FactoryOutput = System.Collections.Generic.IEnumerable<System.ValueTuple<string,System.Action>>;
 
 	// generic item, returns list of options
-	[TypeAlias("factory")]
+	[TypeAlias("fn")]
 	internal sealed class MPItem_Factory : PVMenuProfileItem
 	{
 		public override void PopulateMenu(string path, MenuGenContext ctx)

@@ -8,6 +8,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 	// executes editor menu item(s)
 	[TypeAlias("menu")]
+	[TypeAlias("mi")]
 	internal sealed class MPItem_MenuItem : PVMenuProfileItem
 	{
 		public override void PopulateMenu(string currentPath, MenuGenContext context)

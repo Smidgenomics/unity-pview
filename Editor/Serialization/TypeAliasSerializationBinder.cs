@@ -30,22 +30,34 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 		}
 
-		private readonly Dictionary<Type, string> _typeToAlias = new ();
+		// type -> aliases
+		private readonly Dictionary<Type, List<string>> _typeToAlias = new ();
 		private readonly Dictionary<string, Type> _aliasToType = new ();
 
 		private void AddAlias(string alias, Type type)
 		{
-			_typeToAlias.Add(type, alias);
+			if (_aliasToType.TryGetValue(alias, out var value))
+			{
+				var at = value.Name;
+				throw new ArgumentException($"Alias '{alias}' is already in use for type {at}");
+			}
+
+			if (!_typeToAlias.TryGetValue(type, out var aList))
+			{
+				aList = new List<string>();
+				_typeToAlias.Add(type, aList);
+			}
+			aList.Add(alias);
 			_aliasToType.Add(alias, type);
 		}
 
 		public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
 		{
-			var alias = _typeToAlias.GetValueOrDefault(serializedType);
-			if (alias != null)
+			var aList = _typeToAlias.GetValueOrDefault(serializedType);
+			if (aList != null)
 			{
 				assemblyName = null;
-				typeName = alias;
+				typeName = aList[0];
 			}
 			else
 			{
