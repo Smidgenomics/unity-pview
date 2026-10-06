@@ -67,6 +67,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			window.ShowAsDropDown(GUIUtility.GUIToScreenRect(rect), position.size);
 		}
 
+		public static Rect GetProjectBrowserListArea()
+		{
+			GetProjectBrowserField("m_ListAreaRect", ref _listAreaRectField);
+			return (Rect)_listAreaRectField.GetValue(GetProjectWindow());
+		}
+
 		// return a usable mouse coordinate in project view
 		public static Vector2 GetContextPosInProjectView(Event ev)
 		{

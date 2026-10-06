@@ -42,8 +42,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		private static void HandleMenu()
 		{
-			// not a context event
-			if (Event.current == null || Event.current.type != EventType.ContextClick)
+			// not a proper context event
+			if (!IsUsableContextEvent(Event.current))
 			{
 				return;
 			}
@@ -56,6 +56,31 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				Event.current.Use();
 				m.ShowAsContext();
 			}
+		}
+
+		private static bool IsUsableContextEvent(Event e)
+		{
+			if (e == null)
+			{
+				return false;
+			}
+
+			// straight up context event
+			if (e.type == EventType.ContextClick)
+			{
+				return true;
+			}
+
+			// awkward workaround for empty folders
+			// not triggering a proper ctx event
+			// note: may make this disableable in settings
+			if (e.button == 1 && e.type == EventType.Ignore)
+			{
+				var r = UnityUtility.GetProjectBrowserListArea();
+				return r.Contains(e.mousePosition);
+			}
+
+			return false;
 		}
 
 		private static PVIconProfile GetActiveIconFile()
