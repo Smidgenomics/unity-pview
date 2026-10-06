@@ -40,6 +40,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public static EditorWindow GetProjectWindow()
 		{
 			var t = Type.GetType("UnityEditor.ProjectBrowser, UnityEditor.CoreModule");
+			if (EditorWindow.focusedWindow?.GetType() == t)
+			{
+				return EditorWindow.focusedWindow;
+			}
 			return EditorWindow.GetWindow(t);
 		}
 		
@@ -70,7 +74,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public static Rect GetProjectBrowserListArea()
 		{
 			GetProjectBrowserField("m_ListAreaRect", ref _listAreaRectField);
-			return (Rect)_listAreaRectField.GetValue(GetProjectWindow());
+			var w = GetProjectWindow();
+			if (!w)
+			{
+				return default;
+			}
+			return (Rect)_listAreaRectField.GetValue(w);
 		}
 
 		// return a usable mouse coordinate in project view
