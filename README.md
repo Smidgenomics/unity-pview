@@ -47,6 +47,8 @@ User settings allow you to override project defaults, change how they're used, o
 
 Custom menus are json files that can be read from either `ProjectSettings/pview/` or `UserSettings/pview/`. 
 
+
+
 `*.pvm.json`
 ```json
 {
@@ -78,7 +80,7 @@ Custom menus are json files that can be read from either `ProjectSettings/pview/
 
 ### Adding Items
 
-Included item types: 
+Included item types:
 * `group`
 * `cmd`
 * `new`
@@ -120,7 +122,7 @@ Contains an array of items.
 
 #### `$type`=`cmd`
 
-`path:string`
+`cmd:string`
 
 Adds options that execute menu commands.
 
@@ -156,7 +158,7 @@ Adds options that execute menu commands.
 ```
 
 
-#### `$type`=`create`
+#### `$type`=`new`
 `classType:string`|`subClasses:bool`
 
 Adds menu create options for configured type(s).
@@ -180,7 +182,7 @@ Adds menu create options for configured type(s).
 
 **Example**: Add create option for every subclass
 
-<img src=".github/examples/mi_create_subclasses.jpg" width="100%"/>
+<img width="50%" src=".github/examples/mi_create_subclasses.jpg" width="100%"/>
 
 ```json
 {
@@ -203,7 +205,7 @@ Populates menu with output from static function. The function is referenced usin
 {
 	"$type":"fn",
 	"label":"Actions",
-	"fn":"GetCustomActions; MyGame.MyClass,Smidgenomics.Unity.ProjectView.Editor"
+	"fn":"GetCustomActions; MyGame.MyClass,MyGameAssembly"
 }
 ```
 
@@ -213,6 +215,7 @@ The following method signatures are supported:
 
 
 ## Asset Icons
+
 `extends:string`|`rules:Dictionary<string,IconConfig>`
 
 Browser icons are configured using a set of rules.
@@ -226,8 +229,6 @@ Icon profile (`*.pvi.json`):
 	}
 }
 ```
-
-Icon config:
 ```json
 {
 	"icon":"<guid_or_name>",
@@ -236,18 +237,13 @@ Icon config:
 }
 ```
 
-
-**Example**: Set icon for specific asset (GUID)
-
-<img width="50%" src=".github/examples/irule_guid.jpg" width="100%"/>
+**Example**: Set icon for specific asset
 
 ```json
 "1cbab08d4eadedd4da924f66c02c3dac":{
 	"icon":"b4508e266a1d41445a0cb18bd9acf8d6"
 },
 ```
-
-
 
 **Example**: Any folder named `Textures`
 
@@ -269,6 +265,8 @@ Icon config:
 	"tint":"green"
 }
 ```
+
+
 
 **Example**: Blender files
 
