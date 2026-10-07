@@ -173,7 +173,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		{
 			return LoadCachedFromJSON(file, IconsFromJSON, ref cache);
 		}
-		
+
 		private static MenuGenContext GetMenuFromJSON(string file, ref CachedLoad<MenuGenContext> cache)
 		{
 			return LoadCachedFromJSON(file, MenuFromJSON, ref cache);

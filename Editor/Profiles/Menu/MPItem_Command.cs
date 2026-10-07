@@ -7,9 +7,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using Newtonsoft.Json;
 
 	// executes editor menu item(s)
-	[TypeAlias("menu")]
-	[TypeAlias("mi")]
-	internal sealed class MPItem_MenuItem : PVMenuProfileItem
+	[TypeAlias("menu", obsolete:true)]
+	[TypeAlias("cmd")]
+	internal sealed class MPItem_Command : PVMenuProfileItem
 	{
 		public override void PopulateMenu(string currentPath, MenuGenContext context)
 		{
@@ -35,13 +35,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			else // single item
 			{
-				if (IsPathValid(_path, context))
+				if (IsPathValid(_cmd, context))
 				{
 					// default to menu name if label is empty
 					var mLabel = string.IsNullOrEmpty(label)
-					? _path[(_path.LastIndexOf('/') + 1)..]
+					? _cmd[(_cmd.LastIndexOf('/') + 1)..]
 					: label;
-					AddMenuItem(currentPath + mLabel, _path, context);
+					AddMenuItem(currentPath + mLabel, _cmd, context);
 				}
 			}
 		}
@@ -49,8 +49,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public override void OnInit(MenuGenContext context)
 		{
 			base.OnInit(context);
-			_path ??= string.Empty;
-			_regex = TryGetRegex(_path);
+			_cmd ??= string.Empty;
+			_regex = TryGetRegex(_cmd);
 			_hideDisabled |= context.GetVariableOrDefault("hideDisabledMenus", false);
 		}
 
@@ -61,18 +61,18 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		// either single item or wildcard pattern
 		[field:InjectVariables]
-		[JsonProperty("path")] private string _path { get; set; }
+		[JsonProperty("cmd")] private string _cmd { get; set; }
 		[JsonProperty("hideDisabled")] private bool _hideDisabled;
 
 		private Regex _regex;
 
 		private static Regex TryGetRegex(string str)
 		{
-			if (str.Length > 2 && str.StartsWith("r:"))
+			if (str.Length > 2 && str[0] == '^' && str[^1] == '$') // explicit regex
 			{
 				return new Regex(str.Substring(2));
 			}
-			if (str.Contains('*'))
+			if (str.Contains('*')) // wildcard pattern
 			{
 				return new Wildcard(str);
 			}

@@ -11,6 +11,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 	// create asset(s)
 	[TypeAlias("create")]
+	[TypeAlias("new")]
 	internal sealed class MPItem_CreateAsset : PVMenuProfileItem
 	{
 		public override void PopulateMenu(string path, MenuGenContext context)
@@ -59,7 +60,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			if (!_subClasses)
 			{
-				l.Add((GetTypeCreateLabel(_type), () => UnityUtility.StartCreatingAsset(_type)));
+				var lb = !string.IsNullOrEmpty(label)
+				? label
+				: GetTypeCreateLabel(_type);
+				l.Add((lb, () => UnityUtility.StartCreatingAsset(_type)));
 				return _options;
 			}
 

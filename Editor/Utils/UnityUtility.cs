@@ -39,7 +39,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public static EditorWindow GetProjectWindow()
 		{
-			var t = Type.GetType("UnityEditor.ProjectBrowser, UnityEditor.CoreModule");
+			var t = _PBROWSER_TYPE.Value;
 			if (EditorWindow.focusedWindow?.GetType() == t)
 			{
 				return EditorWindow.focusedWindow;
@@ -122,11 +122,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				return cache;
 			}
-			var t = Type.GetType("UnityEditor.ProjectBrowser, UnityEditor.CoreModule")!;
-			cache = t.GetField(fName, BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+			cache = _PBROWSER_TYPE.Value.GetField(fName, BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 			return cache;
 		}
-		
+
+		private static readonly Lazy<Type> _PBROWSER_TYPE = new(() => Type.GetType("UnityEditor.ProjectBrowser, UnityEditor.CoreModule"));
+
 		// m_ListAreaRect
 		private static FieldInfo _listAreaRectField;
 		
