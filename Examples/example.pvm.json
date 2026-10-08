@@ -1,0 +1,64 @@
+{
+	"scope":"project",
+	"excludeMenus":[
+		"*2D*"
+	],
+	"variables":{
+		"cmd.hideDisabled":true
+	},
+	"root":{
+		"items":[
+			{
+				"$type":"cmd",
+				"cmd":"^Assets\/Create\/Material|Folder$"
+			},
+			null,
+			{
+				"label":"Create",
+				"items":[
+					{
+						"$type":"cmd",
+						"cmd":"Assets/Create/Material"
+					},
+					null,
+					{
+						"$type":"cmd",
+						"cmd":"Assets/Create/Folder"
+					},
+					{
+						"$type":"new",
+						"classType":"UnityEngine.Rendering.PostProcessing.PostProcessProfile,Unity.Postprocessing.Runtime"
+					}
+				]
+			},
+			null,
+			{
+				"$type":"cmd",
+				"label":"UI",
+				"cmd":"Assets/Create/UI Toolkit*"
+			},
+			{
+				"$type":"cmd",
+				"label":"Code/Shader",
+				"cmd":"Assets/Create/Shader*"
+			},
+			{
+				"$type":"cmd",
+				"label":"Code/Scripting",
+				"cmd":"Assets/Create/Scripting*"
+			},
+			null,
+			{
+				"$type":"cmd",
+				"label":"Timeline",
+				"cmd":"*Timeline*"
+			},
+			null,
+			{
+				"$type":"cmd",
+				"label":"Visual Scripting",
+				"cmd":"*Visual Scripting*"
+			}
+		]
+	}
+}

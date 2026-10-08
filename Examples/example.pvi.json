@@ -1,0 +1,20 @@
+{
+	"rules":{
+		"f:*/Textures":{
+			"icon":"TextureImporter Icon"
+		},
+		"f:*/Prefabs":{
+			"icon":"Prefab Icon"
+		},
+		"f:*/Models":{
+			"icon":"Mesh Icon"
+		},
+		"t:GameplayTag":{
+			"icon":"0c9998358fbf80f4d9df1633626ac5ee",
+			"tint":"green"
+		},
+		"*.blend":{
+			"icon":"482859d61bf410148ae3f6668c434350"
+		}
+	}
+}
