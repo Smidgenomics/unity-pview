@@ -1,5 +1,6 @@
 <img src=".github/banner.png" width="100%"/>
 
+<img src=".github/examples/example_icons.jpg" width="100%"/>
 
 # ℹ️ Features
 
