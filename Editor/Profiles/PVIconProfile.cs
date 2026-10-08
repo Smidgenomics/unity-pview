@@ -217,28 +217,45 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		{
 			public IconFilter_Type(string typeRule)
 			{
-				typeRule = typeRule.Replace("t:", "");
-				_explicitType = Type.GetType(typeRule);
-				_wildcard = new Wildcard(typeRule);
+				typeRule = typeRule[2..]; // slice off t:
+				_rule = typeRule;
+				_matchFn = MatchByExactName;
+
+				if (typeRule.StartsWith('^'))
+				{
+					_regex = new Regex(typeRule);
+					_matchFn = MatchByRegex;
+				}
+				else if (typeRule.Contains('*'))
+				{
+					_regex = new Wildcard(typeRule);
+					_matchFn = MatchByRegex;
+				}
+				else if(typeRule.Contains(','))
+				{
+					_exactType = Type.GetType(typeRule);
+					if (_exactType != null)
+					{
+						_matchFn = MatchByExactType;
+					}
+				}
 			}
 
 			public override bool IsMatch(string guid, string path)
 			{
 				var t = AssetDatabase.GetMainAssetTypeAtPath(path);
-				if (t == null)
-				{
-					return false;
-				}
-
-				if (_explicitType != null)
-				{
-					return _explicitType.IsAssignableFrom(t);
-				}
-				return _wildcard.IsMatch(t.Name);
+				return t != null && _matchFn.Invoke(t);
 			}
 
-			private readonly Type _explicitType;
-			private readonly Wildcard _wildcard;
+			private readonly string _rule;
+			private readonly Type _exactType;
+			private readonly Regex _regex;
+			private readonly Func<Type, bool> _matchFn;
+
+			private bool MatchByExactType(Type t) => t == _exactType;
+			private bool MatchByRegex(Type t) => _regex.IsMatch(t.AssemblyQualifiedName!);
+			private bool MatchByExactName(Type t) => t.Name == _rule;
+
 		}
 
 		internal sealed class IconFilter_Path : IconFilter
