@@ -6,6 +6,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Runtime.Serialization;
+	using System.Text.RegularExpressions;
 	using Newtonsoft.Json;
 	using UnityEditor;
 	using UnityEngine;
@@ -179,7 +180,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		private static bool IsPathString(string rule)
 		{
-			return rule.Contains('/') || rule.Contains('*');
+			return rule.Contains('/') || rule.Contains('*') || rule.StartsWith('^');
 		}
 
 		private static IconFilter CreateFilterFromRule(string rule)
@@ -238,29 +239,30 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			private readonly Type _explicitType;
 			private readonly Wildcard _wildcard;
-
 		}
 
 		internal sealed class IconFilter_Path : IconFilter
 		{
-			public IconFilter_Path(string wildcard)
+			public IconFilter_Path(string pattern)
 			{
-				if (wildcard.StartsWith("f:"))
+				if (pattern.StartsWith("f:"))
 				{
 					_folder = true;
-					wildcard = wildcard.Substring(2);
+					pattern = pattern.Substring(2);
 				}
-				_wildcard = new Wildcard(wildcard);
+				_regex = pattern.StartsWith('^') && pattern.EndsWith('$')
+				? new Regex(pattern)
+				: new Wildcard(pattern);
 			}
 			public override bool IsFolder() => _folder;
 
 			public override bool IsMatch(string guid, string path)
 			{
-				return _wildcard.IsMatch(path);
+				return _regex.IsMatch(path);
 			}
 
 			private readonly bool _folder;
-			private readonly Wildcard _wildcard;
+			private readonly Regex _regex;
 		}
 
 		internal sealed class IconFilter_GUID : IconFilter
