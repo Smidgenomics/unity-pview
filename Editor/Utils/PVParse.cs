@@ -38,7 +38,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			Rect outVal = default;
 			outVal.x = ParseFloat(vals[0], defValue.x);
-			outVal.x = ParseFloat(vals[1], defValue.y);
+			outVal.y = ParseFloat(vals[1], defValue.y);
 			outVal.width = ParseFloat(vals[2], defValue.width);
 			outVal.height = ParseFloat(vals[3], defValue.height);
 			return outVal;
