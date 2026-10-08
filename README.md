@@ -29,6 +29,11 @@ In all cases, customizing the Project View involves `.json` profiles files read 
 
 Menu profiles end with `.pvm.json` and icon profiles with `.pvi.json`.
 
+**Example Files**:
+
+* [Menu](https://github.com/Smidgenomics/unity-pview/blob/master/Examples/example.pvm.json)
+* [Icons](https://github.com/Smidgenomics/unity-pview/blob/master/Examples/example.pvi.json)
+
 ## Project Settings
 
 Project settings override Unity's default behaviour for all users of the project unless otherwise is configured in User Settings (see below).

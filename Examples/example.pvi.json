@@ -1,20 +1,68 @@
 {
 	"rules":{
-		"f:*/Textures":{
-			"icon":"TextureImporter Icon"
+		"f:*/Config":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.375,0.25,0.125,0.125"
+		},
+		"f:*/Settings":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.375,0.25,0.125,0.125"
 		},
 		"f:*/Prefabs":{
-			"icon":"Prefab Icon"
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.25,0.375,0.125,0.125"
 		},
 		"f:*/Models":{
-			"icon":"Mesh Icon"
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0,0.375,0.125,0.125"
 		},
-		"t:GameplayTag":{
-			"icon":"0c9998358fbf80f4d9df1633626ac5ee",
-			"tint":"green"
+		"f:*/Code":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0,0.25,0.125,0.125"
+		},
+		"f:*/Editor":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.5,0.25,0.125,0.125"
+		},
+		"f:*/Content":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.125,0.25,0.125,0.125"
+		},
+		"f:*/Data":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.75,0.25,0.125,0.125"
+		},
+		"f:*/Resources":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.75,0.25,0.125,0.125"
+		},
+		"f:*/Scenes":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.625,0.25,0.125,0.125"
+		},
+		"f:*/Plugins":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.125,0.375,0.125,0.125"
+		},
+		"f:Assets/ScriptTemplates":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.875,0.25,0.125,0.125"
+		},
+		"*.md":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.125,0,0.125,0.125"
+		},
+		"*.json":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.25,0,0.125,0.125"
 		},
 		"*.blend":{
-			"icon":"482859d61bf410148ae3f6668c434350"
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0,0,0.125,0.125"
+		},
+		"f:^Packages\/([a-zA-Z_-]|\\d|\\.)+$":{
+			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"coords":"0.125,0.375,0.125,0.125"
 		}
 	}
 }
