@@ -10,8 +10,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using UnityEngine;
 
 	// create asset(s)
-	[TypeAlias("create")]
 	[TypeAlias("new")]
+	[TypeAlias("create", obsolete:true)]
 	internal sealed class MPItem_CreateAsset : PVMenuProfileItem
 	{
 		public override void PopulateMenu(string path, MenuGenContext context)
