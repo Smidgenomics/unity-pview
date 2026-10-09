@@ -10,10 +10,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	/// </summary>
 	internal static class IconGUI
 	{
-		public static void DrawIcon(Rect rect, Texture icon, in Rect uvCoords, Color tint = default)
+		public static bool IsSmallView(in Rect rect)
+		{
+			return rect.width > rect.height;
+		}
+
+		public static void DrawIcon(Rect rect, Texture icon, in Rect uvCoords, Color bgColor, Color tint = default)
 		{
 			TweakLayoutSize(ref rect);
-			EditorGUI.DrawRect(rect, UnityConstants.BrowserColor);
+			EditorGUI.DrawRect(rect, bgColor);
 			if (Mathf.Approximately(tint.a, 0f))
 			{
 				tint = Color.white;

@@ -34,9 +34,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				return;
 			}
-			if (icoFile.TryGetIconByGUID(guid, out var icon))
+			if (icoFile.TryGetIconByGUID(guid, IconGUI.IsSmallView(pos), out var icon))
 			{
-				IconGUI.DrawIcon(pos, icon.icon, icon.coords, tint:icon.tint);
+				IconGUI.DrawIcon(pos, icon.icon, icon.coords, icon.bgColor, tint:icon.tint);
 			}
 		}
 

@@ -9,14 +9,14 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public static readonly SkinPick<Color> BorderColor = new
 		(
-			PVParse.ParseHexColor(COLOR_BORDER_L, default),
-			PVParse.ParseHexColor(COLOR_BORDER_D, default)
+			PVParse.ParseColor(COLOR_BORDER_L, default),
+			PVParse.ParseColor(COLOR_BORDER_D, default)
 		);
 
 		public static readonly SkinPick<Color> BrowserColor = new
 		(
-			PVParse.ParseHexColor(COLOR_BROWSER_BG_L, default),
-			PVParse.ParseHexColor(COLOR_BROWSER_BG_D, default)
+			PVParse.ParseColor(COLOR_BROWSER_BG_L, default),
+			PVParse.ParseColor(COLOR_BROWSER_BG_D, default)
 		);
 
 		// selected asset color

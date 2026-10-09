@@ -1,72 +1,107 @@
 {
 	"rules":{
 		"f:*/Config":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.375,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.375,0.5,0.125,0.125"
 		},
 		"f:*/Settings":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.375,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.375,0.5,0.125,0.125"
 		},
 		"f:*/Prefabs":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.25,0.625,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.25,0.625,0.125,0.125"
+		},
+		"f:*/Materials":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.375,0.625,0.125,0.125"
+		},
+		"f:*/Textures":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.5,0.625,0.125,0.125"
+		},
+		"f:*/Audio":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.625,0.625,0.125,0.125"
+		},
+		"f:*/Shaders":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.75,0.625,0.125,0.125"
 		},
 		"f:*/Models":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0,0.625,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0,0.625,0.125,0.125"
 		},
+		
 		"f:*/Code":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0,0.5,0.125,0.125"
+		},
+		"f:*/Runtime":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0,0.5,0.125,0.125"
 		},
 		"f:*/Editor":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.5,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.5,0.5,0.125,0.125"
 		},
 		"f:*/Content":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.125,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.125,0.5,0.125,0.125"
 		},
 		"f:*/Data":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.75,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.75,0.5,0.125,0.125"
 		},
 		"f:*/Resources":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.75,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.75,0.5,0.125,0.125"
+		},
+		"f:Assets/StreamingAssets":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.75,0.5,0.125,0.125"
 		},
 		"f:*/Scenes":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.625,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.625,0.5,0.125,0.125"
 		},
 		"f:*/Plugins":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.125,0.625,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.125,0.625,0.125,0.125"
 		},
 		"f:Assets/ScriptTemplates":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.875,0.5,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.875,0.5,0.125,0.125"
 		},
 		"*.md":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0,0.125,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"8/8"
 		},
 		"*.json":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.125,0.125,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"9/8"
 		},
 		"*.blend":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0,0,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"1/8",
+			"bg":"0",
+			"sm":{
+				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+				"uv":"0/8"
+			}
 		},
 		"*.psd":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.125,0,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"3/8",
+			"bg":"transparent",
+			"sm":{
+				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+				"uv":"2/8"
+			}
 		},
 		"f:^Packages\/([a-zA-Z_-]|\\d|\\.)+$":{
-			"icon":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"coords":"0.125,0.625,0.125,0.125"
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.125,0.625,0.125,0.125"
 		}
 	}
 }

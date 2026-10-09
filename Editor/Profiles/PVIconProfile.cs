@@ -22,13 +22,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return FromJSON(data, true);
 		}
 
-		public bool TryGetIconByGUID(string guid, out LoadedIcon ico)
+		public bool TryGetIconByGUID(string guid, bool small, out LoadedIcon ico)
 		{
 			ico = default;
 
 			if (_guidRules.TryGetValue(guid, out var ip))
 			{
-				ico = ip.loadedIcon;
+				ico = ip.GetIcon(small);
 				return true;
 			}
 
@@ -43,7 +43,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				}
 				if (f.IsMatch(guid, path))
 				{
-					ico = v.loadedIcon;
+					ico = v.GetIcon(small);
 					return true;
 				}
 			}
@@ -116,10 +116,22 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		private readonly Dictionary<string, IconPrefs> _guidRules = new();
 		private readonly Dictionary<string, bool> _keys = new();
 
+		private struct MultiIcon
+		{
+			public MultiIcon(SkinPick<Texture2D> icon, SkinPick<Texture2D> iconSM)
+			{
+				_icon = icon;
+				_iconSM = iconSM;
+			}
+			private SkinPick<Texture2D> _icon;
+			private SkinPick<Texture2D> _iconSM;
+		}
+
 		public struct LoadedIcon
 		{
 			public Color tint;
 			public Rect coords;
+			public SkinPick<Color> bgColor;
 			public Texture2D icon;
 		}
 
@@ -128,7 +140,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		{
 			foreach (var (r,v) in _rules)
 			{
-				if (v == null || !v.loadedIcon.icon)
+				if (v == null || !v.IsValid())
 				{
 					continue;
 				}
@@ -152,28 +164,63 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		private static Texture2D LoadTexture(string guidOrName)
 		{
+			if (string.IsNullOrEmpty(guidOrName))
+			{
+				return null;
+			}
 			if (guidOrName.IsGUID32())
 			{
 				return AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath(guidOrName));
 			}
-			return EditorGUIUtility.IconContent(guidOrName)?.image as Texture2D;
+
+			try
+			{
+				return EditorGUIUtility.IconContent(guidOrName)?.image as Texture2D;
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"Error parsing icon ref '{guidOrName}': '{e.Message}'");
+				return null;
+			}
 		}
 
 		internal sealed class IconPrefs
 		{
-			[JsonProperty("icon")] private string _iconGUID;
+			[JsonProperty("tex")] private string _iconGUID;
 			[JsonProperty("tint")] private string _tint;
-			[JsonProperty("coords")] private string _coords; // rect
-			[JsonIgnore] public LoadedIcon loadedIcon { get; private set; }
+			[JsonProperty("uv")] private string _uv; // rect
+			[JsonProperty("bg")] private string _bgColor;
+			[JsonProperty("sm")] private IconPrefs _sm;
 
+			public bool IsValid()
+			{
+				return loadedIcon.icon;
+			}
+
+			public LoadedIcon GetIcon(bool small)
+			{
+				if (small && _sm?.loadedIcon.icon)
+				{
+					return _sm.loadedIcon;
+				}
+				return loadedIcon;
+			}
+			
+			[JsonIgnore] private LoadedIcon loadedIcon { get; set; }
+			
 			[OnDeserialized]
 			private void OnDeserialized(StreamingContext ctx)
 			{
+				var bgColor = !string.IsNullOrEmpty(_bgColor) && ColorUtility.TryParseHtmlString(_bgColor, out var pColor)
+				? new(pColor, pColor)
+				: UnityConstants.BrowserColor;
+
 				loadedIcon = new LoadedIcon()
 				{
-					tint = PVParse.ParseHexColor(_tint, Color.white),
-					coords = PVParse.ParseRect(_coords, new Rect(0f, 0f, 1f, 1f)),
+					tint = PVParse.ParseColor(_tint, Color.white),
+					coords = PVParse.ParseRect(_uv, new Rect(0f, 0f, 1f, 1f)),
 					icon = LoadTexture(_iconGUID),
+					bgColor = bgColor
 				};
 			}
 		}
@@ -192,7 +239,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			if (rule.StartsWith("t:"))
 			{
-				return new IconFilter_Type(rule);
+				return new IconFilter_Type(rule[2..]);
 			}
 
 			if (IsPathString(rule))
@@ -217,7 +264,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		{
 			public IconFilter_Type(string typeRule)
 			{
-				typeRule = typeRule[2..]; // slice off t:
 				_rule = typeRule;
 				_matchFn = MatchByExactName;
 
