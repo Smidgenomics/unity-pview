@@ -1,4 +1,7 @@
 {
+	"include":[
+		"ProjectSettings/pview/base.pvi.json"
+	],
 	"defaults":{
 		"folderIcon":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
