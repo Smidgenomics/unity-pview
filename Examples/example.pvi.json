@@ -1,12 +1,36 @@
 {
+	"defaults":{
+		"folderIcon":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0,0.875,0.125,0.125",
+			"tint":"#008080"
+		}
+	},
 	"rules":{
-		"f:*/Config":{
+		"Assets":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0,0.875,0.125,0.125",
+			"tint":"orange"
+		},
+		"Assets/Settings":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.375,0.5,0.125,0.125"
 		},
-		"f:*/Settings":{
+		"Assets/Config":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.375,0.5,0.125,0.125"
+		},
+		"Assets/StreamingAssets":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.75,0.5,0.125,0.125"
+		},
+		"Assets/ScriptTemplates":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.875,0.5,0.125,0.125"
+		},
+		"f:^Packages\/([a-zA-Z_-]|\\d|\\.)+$":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.875,0.625,0.125,0.125"
 		},
 		"f:*/Prefabs":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
@@ -32,7 +56,6 @@
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0,0.625,0.125,0.125"
 		},
-		
 		"f:*/Code":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0,0.5,0.125,0.125"
@@ -57,10 +80,6 @@
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.75,0.5,0.125,0.125"
 		},
-		"f:Assets/StreamingAssets":{
-			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.75,0.5,0.125,0.125"
-		},
 		"f:*/Scenes":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.625,0.5,0.125,0.125"
@@ -68,10 +87,6 @@
 		"f:*/Plugins":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.125,0.625,0.125,0.125"
-		},
-		"f:Assets/ScriptTemplates":{
-			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.875,0.5,0.125,0.125"
 		},
 		"*.md":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
@@ -98,10 +113,6 @@
 				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 				"uv":"2/8"
 			}
-		},
-		"f:^Packages\/([a-zA-Z_-]|\\d|\\.)+$":{
-			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.125,0.625,0.125,0.125"
 		}
 	}
 }

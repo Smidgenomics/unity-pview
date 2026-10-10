@@ -22,10 +22,17 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return FromJSON(data, true);
 		}
 
+		private struct ProfileLoadContext
+		{
+			// path -> profile
+			public Dictionary<string, PVIconProfile> profiles;
+			public Queue<string> includeQueue;
+		}
+
 		public bool TryGetIconByGUID(string guid, bool small, out LoadedIcon ico)
 		{
 			ico = default;
-
+			
 			if (_guidRules.TryGetValue(guid, out var ip))
 			{
 				ico = ip.GetIcon(small);
@@ -33,6 +40,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 
 			var path = PathFromGUID(guid);
+
 			var isFolder = AssetDatabase.IsValidFolder(path);
 			foreach (var (k, val) in _filterRules)
 			{
@@ -47,6 +55,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 					return true;
 				}
 			}
+
+			if (isFolder && _defaults.folderIcon != null && _defaults.folderIcon.IsValid())
+			{
+				ico = _defaults.folderIcon.GetIcon(small);
+				return true;
+			}
+
 			return false;
 		}
 
@@ -62,14 +77,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				{
 					return prof;
 				}
-				
+
 				var bProfile = FromJSON(baseData, false);
 
 				if (bProfile._rules != null)
 				{
-					foreach (var (key, isGUID) in bProfile._keys)
+					foreach (var (key, filterType) in bProfile._keys)
 					{
-						if (!prof._keys.TryAdd(key, isGUID))
+						var isGUID = filterType == typeof(IconFilter_GUID);
+						if (!prof._keys.TryAdd(key, filterType))
 						{
 							continue;
 						}
@@ -109,30 +125,27 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		}
 		private static JsonSerializerSettings _cachedSerializationSettings;
 
+		// profiles to include
+		[JsonProperty("includes")] private string[] _includes;
+		[JsonProperty("defaults")] private ProfileDefaults _defaults;
 		[JsonProperty("extends")] private string _baseProfile { get; set; }
-		[JsonProperty("rules")] private Dictionary<string, IconPrefs> _rules { get; set; } = new();
+		[JsonProperty("rules")] private Dictionary<string, IconSettings> _rules { get; set; } = new();
 
-		private readonly Dictionary<string,(IconFilter, IconPrefs)> _filterRules = new();
-		private readonly Dictionary<string, IconPrefs> _guidRules = new();
-		private readonly Dictionary<string, bool> _keys = new();
+		private readonly Dictionary<string,(IconFilter, IconSettings)> _filterRules = new();
+		private readonly Dictionary<string, IconSettings> _guidRules = new();
+		private readonly Dictionary<string, Type> _keys = new();
 
-		private struct MultiIcon
+		private struct ProfileDefaults
 		{
-			public MultiIcon(SkinPick<Texture2D> icon, SkinPick<Texture2D> iconSM)
-			{
-				_icon = icon;
-				_iconSM = iconSM;
-			}
-			private SkinPick<Texture2D> _icon;
-			private SkinPick<Texture2D> _iconSM;
+			[JsonProperty] public IconSettings folderIcon;
 		}
 
 		public struct LoadedIcon
 		{
+			public Texture2D tex;
 			public Color tint;
-			public Rect coords;
+			public Rect uv;
 			public SkinPick<Color> bgColor;
-			public Texture2D icon;
 		}
 
 		[OnDeserialized]
@@ -149,14 +162,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				{
 					continue;
 				}
-				if (f is IconFilter_GUID)
+				_keys[r] = f.GetType();
+				if (f is IconFilter_GUID guidRule)
 				{
-					_keys[r] = true;
-					_guidRules[r] = v;
+					_guidRules[guidRule.guid] = v;
 				}
 				else
 				{
-					_keys[r] = false;
 					_filterRules.Add(r, (f, v));
 				}
 			}
@@ -184,32 +196,29 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 		}
 
-		internal sealed class IconPrefs
+		internal sealed class IconSettings
 		{
 			[JsonProperty("tex")] private string _iconGUID;
 			[JsonProperty("tint")] private string _tint;
 			[JsonProperty("uv")] private string _uv; // rect
 			[JsonProperty("bg")] private string _bgColor;
-			[JsonProperty("sm")] private IconPrefs _sm;
+			[JsonProperty("sm")] private IconSettings _sm;
 
 			public bool IsValid()
 			{
-				return loadedIcon.icon;
+				return loadedIcon.tex;
 			}
 
 			public LoadedIcon GetIcon(bool small)
 			{
-				if (small && _sm?.loadedIcon.icon)
+				if (small && _sm?.loadedIcon.tex)
 				{
 					return _sm.loadedIcon;
 				}
 				return loadedIcon;
 			}
-			
-			[JsonIgnore] private LoadedIcon loadedIcon { get; set; }
-			
-			[OnDeserialized]
-			private void OnDeserialized(StreamingContext ctx)
+
+			public void LoadIcon()
 			{
 				var bgColor = !string.IsNullOrEmpty(_bgColor) && ColorUtility.TryParseHtmlString(_bgColor, out var pColor)
 				? new(pColor, pColor)
@@ -218,16 +227,19 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				loadedIcon = new LoadedIcon()
 				{
 					tint = PVParse.ParseColor(_tint, Color.white),
-					coords = PVParse.ParseRect(_uv, new Rect(0f, 0f, 1f, 1f)),
-					icon = LoadTexture(_iconGUID),
+					uv = PVParse.ParseRect(_uv, new Rect(0f, 0f, 1f, 1f)),
+					tex = LoadTexture(_iconGUID),
 					bgColor = bgColor
 				};
 			}
-		}
-
-		private static bool IsPathString(string rule)
-		{
-			return rule.Contains('/') || rule.Contains('*') || rule.StartsWith('^');
+			
+			[JsonIgnore] private LoadedIcon loadedIcon { get; set; }
+			
+			[OnDeserialized]
+			private void OnDeserialized(StreamingContext ctx)
+			{
+				LoadIcon();
+			}
 		}
 
 		private static IconFilter CreateFilterFromRule(string rule)
@@ -242,7 +254,24 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				return new IconFilter_Type(rule[2..]);
 			}
 
-			if (IsPathString(rule))
+			var isPattern = rule.Contains('*') || rule.Contains('^');
+
+			// if the path is absolute, we check if a guid already exists for it
+			if (!isPattern)
+			{
+				var path = rule;
+				if (path.StartsWith("f:"))
+				{
+					path = path[2..];
+				}
+				var possibleGUID = AssetDatabase.AssetPathToGUID(path);
+				if (!string.IsNullOrEmpty(possibleGUID))
+				{
+					return new IconFilter_GUID(possibleGUID);
+				}
+			}
+
+			if (isPattern)
 			{
 				return new IconFilter_Path(rule);
 			}
@@ -330,14 +359,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		internal sealed class IconFilter_GUID : IconFilter
 		{
+			public string guid { get; }
+			
 			public IconFilter_GUID(string guid)
 			{
 				this.guid = guid;
 			}
 
-			public override bool IsMatch(string inGUID, string path) => this.guid == inGUID;
+			public override bool IsMatch(string inGUID, string path) => guid == inGUID;
 			
-			private readonly string guid;
 		}
 		
 		
