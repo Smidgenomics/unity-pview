@@ -159,27 +159,35 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return PickMenu(behaviour);
 		}
 
-		private static PVIconProfile IconsFromJSON(string json)
-		{
-			return PVIconProfile.FromJSON(json);
-		}
+		// private static PVIconProfile IconsFromJSON(string json)
+		// {
+		// 	return PVIconProfile.FromJSON(json);
+		// }
 		
-		private static MenuGenContext MenuFromJSON(string json)
+		private static PVIconProfile IconsFromJSONPath(string path)
 		{
+			return PVIconProfile.LoadFromPath(path);
+			// var json = File.ReadAllText($"{PVConstants.PROJECT_ROOT}/{path}");
+			// return PVIconProfile.FromJSON(json);
+		}
+
+		private static MenuGenContext MenuFromJSONPath(string path)
+		{
+			var json = File.ReadAllText($"{PVConstants.PROJECT_ROOT}/{path}");
 			return PVMenuProfile.FromJSON(json).BuildMenu();
 		}
 
 		private static PVIconProfile GetIconsFromJSONPath(string file, ref CachedLoad<PVIconProfile> cache)
 		{
-			return LoadCachedFromJSON(file, IconsFromJSON, ref cache);
+			return LoadCachedFromJSON(file, IconsFromJSONPath, ref cache);
 		}
 
 		private static MenuGenContext GetMenuFromJSON(string file, ref CachedLoad<MenuGenContext> cache)
 		{
-			return LoadCachedFromJSON(file, MenuFromJSON, ref cache);
+			return LoadCachedFromJSON(file, MenuFromJSONPath, ref cache);
 		}
 
-		private static T LoadCachedFromJSON<T>(string file, Func<string,T> factory, ref CachedLoad<T> cache)
+		private static T LoadCachedFromJSON<T>(string file, Func<string,T> factory, ref CachedLoad<T> cache) where T : IStaleInfo
 		{
 			var absFilePath = $"{PVConstants.PROJECT_ROOT}/{file}";
 			var exists = File.Exists(absFilePath);
@@ -191,6 +199,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				cache = default;
 			}
+			else if (cache.data != null && cache.data.IsStale())
+			{
+				cache = default;
+			}
+			
 
 			if (lastEdit != cache.timestamp)
 			{
@@ -198,7 +211,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				{
 					try
 					{
-						cache = new CachedLoad<T>(file, lastEdit, factory.Invoke(File.ReadAllText(absFilePath)));
+						// cache = new CachedLoad<T>(file, lastEdit, factory.Invoke(File.ReadAllText(absFilePath)));
+						cache = new CachedLoad<T>(file, lastEdit, factory.Invoke(file));
 						return cache.data;
 					}
 					catch (Exception e)

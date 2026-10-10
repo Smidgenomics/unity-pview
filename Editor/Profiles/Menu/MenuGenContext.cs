@@ -125,7 +125,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using UnityEditor;
 	using UnityEngine;
 
-	public sealed class MenuGenContext
+	public sealed class MenuGenContext : IStaleInfo
 	{
 		internal MenuGenContext(IReadOnlyList<string> menuItems, Dictionary<string,object> variables)
 		{
@@ -302,6 +302,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return path;
 		}
 
+		public bool IsStale()
+		{
+			return false;
+		}
 	}
 }
 

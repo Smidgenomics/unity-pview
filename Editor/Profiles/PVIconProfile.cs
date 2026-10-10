@@ -5,7 +5,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using System.Runtime.Serialization;
 	using System.Text.RegularExpressions;
 	using Newtonsoft.Json;
 	using UnityEditor;
@@ -15,18 +14,126 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	/// Icon JSON file
 	/// </summary>
 	[Serializable]
-	internal sealed class PVIconProfile
+	internal sealed class PVIconProfile : IStaleInfo
 	{
-		public static PVIconProfile FromJSON(string data)
+		public static PVIconProfile LoadFromPath(string path)
 		{
-			return FromJSON(data, true);
+			var ctx = ProfileLoadContext.New(path);
+			var nextPath = ctx.DequeuePath();
+			while (nextPath != null)
+			{
+				var data = ReadRelativeFile(nextPath);
+				if (data == null)
+				{
+					nextPath = ctx.DequeuePath();
+					continue;
+				}
+				var prof = JsonConvert.DeserializeObject<PVIconProfile>(data, GetSerializationSettings());
+				ctx.AddProfile(nextPath, prof);
+				nextPath = ctx.DequeuePath();
+			}
+
+			if (ctx.loadedProfiles.Count == 0)
+			{
+				return null;
+			}
+
+			var baseProf = ctx.loadedProfiles[^1];
+
+			for (var i = ctx.loadedProfiles.Count - 2; i >= 0; i--)
+			{
+				baseProf.MergeOtherRules(ctx.loadedProfiles[i]);
+			}
+			baseProf.BuildFilters();
+			baseProf.SetSourcePaths(ctx.loadedPaths);
+			return baseProf;
+		}
+
+		private void SetSourcePaths(IEnumerable<string> paths)
+		{
+			_sourcePaths = new();
+			foreach (var relPath in paths)
+			{
+				var absPath = $"{PVConstants.PROJECT_ROOT}/{relPath}";
+				var time = File.GetLastWriteTimeUtc(absPath).ToFileTime();
+				_sourcePaths.Add((absPath, time));
+			}
+		}
+
+		public bool IsStale()
+		{
+			if (_sourcePaths == null)
+			{
+				return false;
+			}
+			foreach (var (path, time) in _sourcePaths)
+			{
+				if (File.GetLastWriteTimeUtc(path).ToFileTime() != time)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private void MergeOtherRules(PVIconProfile otherProf)
+		{
+			if (otherProf._defaults.folderIcon != null)
+			{
+				_defaults.folderIcon = otherProf._defaults.folderIcon;
+			}
+
+			// add/overwrite rules
+			foreach (var (rule, ico) in otherProf._rules)
+			{
+				_rules[rule] = ico;
+			}
 		}
 
 		private struct ProfileLoadContext
 		{
+			public IReadOnlyList<PVIconProfile> loadedProfiles => _loadedProfiles;
+			public IEnumerable<string> loadedPaths => _loadedPaths;
+
+			public readonly string DequeuePath()
+			{
+				return _pathQueue.Count > 0 ? _pathQueue.Dequeue() : null;
+			}
+
+			public static ProfileLoadContext New(string mainPath)
+			{
+				var ctx = new ProfileLoadContext
+				{
+					mainPath = mainPath,
+					_pathQueue = new(){},
+					_loadedProfiles = new(),
+					_loadedPaths = new()
+				};
+				ctx._pathQueue.Enqueue(mainPath);
+				return ctx;
+			}
+
+			public readonly void AddProfile(string path, PVIconProfile profile)
+			{
+				_loadedPaths.Add(path);
+				_loadedProfiles.Add(profile);
+				if (profile._include != null)
+				{
+					foreach (var p in profile._include)
+					{
+						if (!_loadedPaths.Contains(p))
+						{
+							_pathQueue.Enqueue(p);
+						}
+					}
+				}
+			}
+
 			// path -> profile
-			public Dictionary<string, PVIconProfile> profiles;
-			public Queue<string> includeQueue;
+			public string mainPath { get; private set; }
+			private Queue<string> _pathQueue;
+			private HashSet<string> _loadedPaths;
+			private List<PVIconProfile> _loadedProfiles;
 		}
 
 		public bool TryGetIconByGUID(string guid, bool small, out LoadedIcon ico)
@@ -61,57 +168,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				ico = _defaults.folderIcon.GetIcon(small);
 				return true;
 			}
-
 			return false;
-		}
-
-		private static PVIconProfile FromJSON(string data, bool recursive)
-		{
-			var prof = JsonConvert.DeserializeObject<PVIconProfile>(data, GetSerializationSettings());
-
-			if (recursive && !string.IsNullOrEmpty(prof._baseProfile))
-			{
-				var baseData = ReadRelativeFile(prof._baseProfile);
-
-				if (baseData == null)
-				{
-					return prof;
-				}
-
-				var bProfile = FromJSON(baseData, false);
-
-				if (bProfile._rules != null)
-				{
-					foreach (var (key, filterType) in bProfile._keys)
-					{
-						var isGUID = filterType == typeof(IconFilter_GUID);
-						if (!prof._keys.TryAdd(key, filterType))
-						{
-							continue;
-						}
-						if (isGUID)
-						{
-							prof._guidRules.Add(key, bProfile._guidRules[key]);
-						}
-						else
-						{
-							prof._filterRules.Add(key, bProfile._filterRules[key]);
-						}
-						
-					}
-				}
-			}
-			return prof;
 		}
 
 		private static string ReadRelativeFile(string pPath)
 		{
-			var fPath = PVConstants.PROJECT_ROOT + "/" + pPath;
-			if (File.Exists(fPath))
-			{
-				return File.ReadAllText(fPath);
-			}
-			return null;
+			var fPath = $"{PVConstants.PROJECT_ROOT}/{pPath}";
+			return File.Exists(fPath) ? File.ReadAllText(fPath) : null;
 		}
 
 		private static JsonSerializerSettings GetSerializationSettings()
@@ -125,10 +188,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		}
 		private static JsonSerializerSettings _cachedSerializationSettings;
 
+		private List<(string, long)> _sourcePaths;
+
 		// profiles to include
-		[JsonProperty("includes")] private string[] _includes;
+		[JsonProperty("include")] private string[] _include;
 		[JsonProperty("defaults")] private ProfileDefaults _defaults;
-		[JsonProperty("extends")] private string _baseProfile { get; set; }
 		[JsonProperty("rules")] private Dictionary<string, IconSettings> _rules { get; set; } = new();
 
 		private readonly Dictionary<string,(IconFilter, IconSettings)> _filterRules = new();
@@ -148,12 +212,16 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			public SkinPick<Color> bgColor;
 		}
 
-		[OnDeserialized]
-		private void OnDeserialized(StreamingContext ctx)
+		private void BuildFilters()
 		{
 			foreach (var (r,v) in _rules)
 			{
-				if (v == null || !v.IsValid())
+				if (v == null)
+				{
+					continue;
+				}
+				v.LoadRefs();
+				if (!v.IsValid())
 				{
 					continue;
 				}
@@ -206,40 +274,36 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			public bool IsValid()
 			{
-				return loadedIcon.tex;
+				return _loadedIcon.tex;
 			}
 
-			public LoadedIcon GetIcon(bool small)
+			public  ref readonly LoadedIcon GetIcon(bool small)
 			{
-				if (small && _sm?.loadedIcon.tex)
+				if (small && _sm?._loadedIcon.tex)
 				{
-					return _sm.loadedIcon;
+					return ref _sm._loadedIcon;
 				}
-				return loadedIcon;
+				return ref _loadedIcon;
 			}
 
-			public void LoadIcon()
+			public void LoadRefs()
 			{
 				var bgColor = !string.IsNullOrEmpty(_bgColor) && ColorUtility.TryParseHtmlString(_bgColor, out var pColor)
 				? new(pColor, pColor)
 				: UnityConstants.BrowserColor;
 
-				loadedIcon = new LoadedIcon()
+				_loadedIcon = new LoadedIcon()
 				{
 					tint = PVParse.ParseColor(_tint, Color.white),
 					uv = PVParse.ParseRect(_uv, new Rect(0f, 0f, 1f, 1f)),
 					tex = LoadTexture(_iconGUID),
 					bgColor = bgColor
 				};
+
+				_sm?.LoadRefs();
 			}
-			
-			[JsonIgnore] private LoadedIcon loadedIcon { get; set; }
-			
-			[OnDeserialized]
-			private void OnDeserialized(StreamingContext ctx)
-			{
-				LoadIcon();
-			}
+
+			[JsonIgnore] private LoadedIcon _loadedIcon;
 		}
 
 		private static IconFilter CreateFilterFromRule(string rule)
