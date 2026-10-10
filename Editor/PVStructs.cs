@@ -15,6 +15,29 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
+	using UnityEngine;
+
+	internal struct LoadedIcon
+	{
+		public Texture2D tex;
+		public Color tint;
+		public Rect uv;
+		public SkinPick<Color> bgColor;
+	}
+}
+
+namespace Smidgenomics.Unity.ProjectView.Editor
+{
+	using Newtonsoft.Json;
+
+	internal struct IconDefaults
+	{
+		[JsonProperty] public IconSettings folderIcon;
+	}
+}
+
+namespace Smidgenomics.Unity.ProjectView.Editor
+{
 	using UnityEditor;
 
 	// selects value based on editor skin
@@ -63,7 +86,47 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return ctrl.enabled || shift.enabled || alt.enabled;
 		}
 	}
-	
+}
+
+namespace Smidgenomics.Unity.ProjectView.Editor
+{
+	using System.Collections.Generic;
+	using System.IO;
+
+	internal readonly struct FileEditCheck
+	{
+		public bool AnyEdited()
+		{
+			if (_paths != null)
+			{
+				foreach (var (path, time) in _paths)
+				{
+					if (File.GetLastWriteTimeUtc(path).ToFileTime() != time)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public FileEditCheck(IEnumerable<string> filePaths)
+		{
+			_paths = new List<(string, long)>();
+			foreach (var relPath in filePaths)
+			{
+				var absPath = $"{PVConstants.PROJECT_ROOT}/{relPath}";
+				if (!File.Exists(absPath))
+				{
+					continue;
+				}
+				var time = File.GetLastWriteTimeUtc(absPath).ToFileTime();
+				_paths.Add((absPath, time));
+			}
+		}
+		// absolute path/edit time
+		private readonly List<(string, long)> _paths;
+	}
 }
 
 namespace Smidgenomics.Unity.ProjectView.Editor

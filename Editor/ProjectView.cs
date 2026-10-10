@@ -29,12 +29,12 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		private static void DrawIcons(Rect pos, string guid)
 		{
-			var icoFile = GetActiveIconFile();
-			if (icoFile == null)
+			var icons = GetActiveIconFile();
+			if (icons == null)
 			{
 				return;
 			}
-			if (icoFile.TryGetIconByGUID(guid, IconGUI.IsSmallView(pos), out var icon))
+			if (icons.TryGetIcon(guid, IconGUI.IsSmallView(pos), out var icon))
 			{
 				IconGUI.DrawIcon(pos, icon.tex, icon.uv, icon.bgColor, tint:icon.tint);
 			}
@@ -83,7 +83,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return false;
 		}
 
-		private static PVIconProfile GetActiveIconFile()
+		private static IconGenContext GetActiveIconFile()
 		{
 			return PVSettings_User.instance._defaultIcons switch
 			{
@@ -96,8 +96,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		private static CachedLoad<MenuGenContext> _cachedUserMenu;
 		private static CachedLoad<MenuGenContext> _cachedProjectMenu;
-		private static CachedLoad<PVIconProfile> _cachedUserIcons;
-		private static CachedLoad<PVIconProfile> _cachedProjectIcons;
+		private static CachedLoad<IconGenContext> _cachedUserIcons;
+		private static CachedLoad<IconGenContext> _cachedProjectIcons;
 
 		private struct CachedLoad<T>
 		{
@@ -159,16 +159,9 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return PickMenu(behaviour);
 		}
 
-		// private static PVIconProfile IconsFromJSON(string json)
-		// {
-		// 	return PVIconProfile.FromJSON(json);
-		// }
-		
-		private static PVIconProfile IconsFromJSONPath(string path)
+		private static IconGenContext IconsFromJSONPath(string path)
 		{
-			return PVIconProfile.LoadFromPath(path);
-			// var json = File.ReadAllText($"{PVConstants.PROJECT_ROOT}/{path}");
-			// return PVIconProfile.FromJSON(json);
+			return PVIconProfile.LoadFromPath(path).CreateContext();
 		}
 
 		private static MenuGenContext MenuFromJSONPath(string path)
@@ -177,7 +170,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return PVMenuProfile.FromJSON(json).BuildMenu();
 		}
 
-		private static PVIconProfile GetIconsFromJSONPath(string file, ref CachedLoad<PVIconProfile> cache)
+		private static IconGenContext GetIconsFromJSONPath(string file, ref CachedLoad<IconGenContext> cache)
 		{
 			return LoadCachedFromJSON(file, IconsFromJSONPath, ref cache);
 		}
