@@ -27,6 +27,10 @@
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.875,0.5,0.125,0.125"
 		},
+		"Assets/Content":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"0.125,0.5,0.125,0.125"
+		},
 		"Assets/Plugins":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.125,0.625,0.125,0.125"
@@ -35,47 +39,43 @@
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.875,0.625,0.125,0.125"
 		},
-		"f:*/Prefabs":{
+		"*/Prefabs":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.25,0.625,0.125,0.125"
 		},
-		"f:*/Materials":{
+		"*/Materials":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.375,0.625,0.125,0.125"
 		},
-		"f:*/Textures":{
+		"*/Textures":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.5,0.625,0.125,0.125"
 		},
-		"f:*/Audio":{
+		"*/Audio":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.625,0.625,0.125,0.125"
 		},
-		"f:*/Shaders":{
+		"*/Shaders":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.75,0.625,0.125,0.125"
 		},
-		"f:*/Models":{
+		"*/Models":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0,0.625,0.125,0.125"
 		},
-		"f:*/Code":{
+		"*/Code":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0,0.5,0.125,0.125"
 		},
-		"f:*/Runtime":{
+		"*/Runtime":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0,0.5,0.125,0.125"
 		},
-		"f:*/Editor":{
+		"*/Editor":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.5,0.5,0.125,0.125"
 		},
-		"f:*/Content":{
-			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.125,0.5,0.125,0.125"
-		},
-		"f:*/Scenes":{
+		"*/Scenes":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0.625,0.5,0.125,0.125"
 		},
@@ -93,7 +93,9 @@
 			"bg":"0",
 			"sm":{
 				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-				"uv":"0/8"
+				"uv":"0/8",
+				"bg":"0",
+				"right":true
 			}
 		},
 		"*.psd":{
@@ -102,7 +104,9 @@
 			"bg":"transparent",
 			"sm":{
 				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-				"uv":"2/8"
+				"uv":"2/8",
+				"bg":"0",
+				"right":true
 			}
 		}
 	}
