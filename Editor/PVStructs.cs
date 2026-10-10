@@ -23,6 +23,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		public Color tint;
 		public Rect uv;
 		public SkinPick<Color> bgColor;
+		public bool floatRight;
 	}
 }
 

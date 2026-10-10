@@ -11,14 +11,20 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public static Color ParseColor(string hexColor, Color dValue)
 		{
+			return TryParseColor(hexColor, out var c)
+			? c
+			: dValue;
+		}
+		
+		public static bool TryParseColor(string hexColor, out Color outColor)
+		{
 			// shorthand for empty
 			if (hexColor is { Length: 1 } && hexColor[0] == '0')
 			{
-				return Color.clear;
+				outColor = Color.clear;
+				return true;
 			}
-			return ColorUtility.TryParseHtmlString(hexColor, out var c)
-			? c
-			: dValue;
+			return ColorUtility.TryParseHtmlString(hexColor, out outColor);
 		}
 
 		public static float ParseFloat(string str, float defValue)

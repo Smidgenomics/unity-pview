@@ -15,9 +15,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return rect.width > rect.height;
 		}
 
-		public static void DrawIcon(Rect rect, Texture icon, in Rect uvCoords, Color bgColor, Color tint = default)
+		
+		public static void DrawIcon(Rect rect, bool adjust, Texture icon, in Rect uvCoords, Color bgColor, Color tint = default)
 		{
-			TweakLayoutSize(ref rect);
+			if (adjust)
+			{
+				TweakLayoutSize(ref rect);
+			}
 			EditorGUI.DrawRect(rect, bgColor);
 			if (Mathf.Approximately(tint.a, 0f))
 			{

@@ -11,7 +11,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public LoadedIcon LoadIcon()
 		{
-			var bgColor = !string.IsNullOrEmpty(_bgColor) && ColorUtility.TryParseHtmlString(_bgColor, out var pColor)
+			var bgColor = !string.IsNullOrEmpty(_bgColor) && PVParse.TryParseColor(_bgColor, out var pColor)
 			? new(pColor, pColor)
 			: UnityConstants.BrowserColor;
 			return new LoadedIcon()
@@ -19,7 +19,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				tint = PVParse.ParseColor(_tint, Color.white),
 				uv = PVParse.ParseRect(_uv, new Rect(0f, 0f, 1f, 1f)),
 				tex = PVUtils.LoadTexture(_iconGUID),
-				bgColor = bgColor
+				bgColor = bgColor,
+				floatRight = _right
 			};
 		}
 
@@ -28,5 +29,6 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[JsonProperty("uv")] private string _uv; // rect
 		[JsonProperty("bg")] private string _bgColor;
 		[JsonProperty("sm")] private IconSettings _sm;
+		[JsonProperty("right")] private bool _right;
 	}
 }
