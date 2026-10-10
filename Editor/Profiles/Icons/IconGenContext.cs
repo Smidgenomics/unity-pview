@@ -1,11 +1,14 @@
 // smidgens @ github
 
+// ReSharper disable TailRecursiveCall
+
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Text.RegularExpressions;
 	using UnityEditor;
+	using UnityEngine;
 
 	[System.Serializable]
 	internal sealed class IconGenContext : IStaleInfo
@@ -62,6 +65,15 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public void AddRule(string rule, IconSettings settings)
 		{
+			if (rule.Contains(';'))
+			{
+				foreach (var r in rule.Split(';'))
+				{
+					AddRule(r.Trim(), settings);
+				}
+				return;
+			}
+
 			var mainIcon = settings.LoadIcon();
 			var smallIcon = settings.smallVariant?.LoadIcon() ?? mainIcon;
 			if (rule.IsGUID32())
@@ -82,6 +94,16 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			else
 			{
+				// if path is absolute, we might be able to cache it by guid
+				if (!rule.Contains('*') && !rule.Contains('^'))
+				{
+					var possibleGUID = AssetDatabase.AssetPathToGUID(rule);
+					if (!string.IsNullOrEmpty(possibleGUID))
+					{
+						AddRule(possibleGUID, settings);
+						return;
+					}
+				}
 				fn = GetPathFilterFn(rule);
 			}
 			
