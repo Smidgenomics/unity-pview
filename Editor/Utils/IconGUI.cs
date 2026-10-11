@@ -15,19 +15,28 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return rect.width > rect.height;
 		}
 
-		
-		public static void DrawIcon(Rect rect, bool adjust, Texture icon, in Rect uvCoords, Color bgColor, Color tint = default)
+		public static void DrawIcon(Rect rect, bool adjust, in LoadedIcon icon)
 		{
 			if (adjust)
 			{
 				TweakLayoutSize(ref rect);
 			}
-			EditorGUI.DrawRect(rect, bgColor);
+			EditorGUI.DrawRect(rect, icon.bgColor);
+			var tint = icon.tint;
 			if (Mathf.Approximately(tint.a, 0f))
 			{
 				tint = Color.white;
 			}
-			IMGUI.DrawSprite(rect, icon, uvCoords, tint);
+
+			var pos = icon.pos;
+			var ox = rect.width * pos.x;
+			var oy = rect.height * pos.y;
+
+			rect.position += new Vector2(ox, oy);
+			rect.width *= pos.width;
+			rect.height *= pos.height;
+
+			IMGUI.DrawSprite(rect, icon.tex, icon.uv, tint);
 		}
 
 		private static void TweakLayoutSize(ref Rect rect)

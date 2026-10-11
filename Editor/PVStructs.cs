@@ -21,6 +21,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public Texture2D tex;
 		public Color tint;
+		public Rect pos;
 		public Rect uv;
 		public SkinPick<Color> bgColor;
 		public bool floatRight;

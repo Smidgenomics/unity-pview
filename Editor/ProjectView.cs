@@ -41,11 +41,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			{
 				if (isSmall && icon.floatRight)
 				{
-					IconGUI.DrawIcon(pos.SliceRight(pos.height), false, icon.tex, icon.uv, icon.bgColor, tint:icon.tint);
+					IconGUI.DrawIcon(pos.SliceRight(pos.height), false, icon);
 				}
 				else
 				{
-					IconGUI.DrawIcon(pos, true, icon.tex, icon.uv, icon.bgColor, tint:icon.tint);
+					IconGUI.DrawIcon(pos, true, icon);
 				}
 			}
 		}
