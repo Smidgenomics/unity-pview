@@ -222,24 +222,26 @@ The following method signatures are supported:
 
 ## Asset Icons
 
-`extends:string`|`rules:Dictionary<string,IconConfig>`
+`include?:string[]`|`rules:Dictionary<string,IconConfig>`|`defaults?:object`
 
 Browser icons are configured using a set of rules.
 
 Icon profile (`*.pvi.json`):
 ```json
 {
-	"extends":"ProjectSettings/pview/ourdefault.pvi.json",
+	"include":[
+		"ProjectSettings/pview/ourdefault.pvi.json"
+	],
 	"rules":{
-		...
+	
 	}
 }
 ```
 ```json
 {
-	"icon":"<guid_or_name>",
+	"tex":"<guid_or_name>",
 	"tint":"#fff",
-	"coords":"0,0,1,1"
+	"uv":"0,0,1,1"
 }
 ```
 
@@ -247,7 +249,7 @@ Icon profile (`*.pvi.json`):
 
 ```json
 "1cbab08d4eadedd4da924f66c02c3dac":{
-	"icon":"b4508e266a1d41445a0cb18bd9acf8d6"
+	"tex":"b4508e266a1d41445a0cb18bd9acf8d6"
 },
 ```
 
@@ -257,7 +259,7 @@ Icon profile (`*.pvi.json`):
 
 ```json
 "f:*/Textures":{
-	"icon":"b4508e266a1d41445a0cb18bd9acf8d6"
+	"tex":"b4508e266a1d41445a0cb18bd9acf8d6"
 }
 ```
 
@@ -267,7 +269,7 @@ Icon profile (`*.pvi.json`):
 
 ```json
 "t:GameplayTag":{
-	"icon":"1dbc26c96219eb34d87eecef7f383d9f",
+	"tex":"1dbc26c96219eb34d87eecef7f383d9f",
 	"tint":"green"
 }
 ```
@@ -280,6 +282,6 @@ Icon profile (`*.pvi.json`):
 
 ```json
 "*.blend":{
-	"icon":"482859d61bf410148ae3f6668c434350"
+	"tex":"482859d61bf410148ae3f6668c434350"
 }
 ```
