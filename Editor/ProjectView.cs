@@ -98,8 +98,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			return PVSettings_User.instance._defaultIcons switch
 			{
 				EOverrideBehaviour.UnityDefault => null,
-				EOverrideBehaviour.ProjectProfile => GetIconsFromJSONPath(PVSettings_Project.instance._iconProfile, ref _cachedProjectIcons),
-				EOverrideBehaviour.UserProfile => GetIconsFromJSONPath(PVSettings_User.instance._iconProfile, ref _cachedUserIcons),
+				EOverrideBehaviour.ProjectProfile => GetProjectIcons(),
+				EOverrideBehaviour.UserProfile => GetUserIcons(),
 				_ => null
 			};
 		}
@@ -123,14 +123,25 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 		}
 
+		private static IconGenContext GetProjectIcons()
+		{
+			return GetIconsFromJSONPath(PVSettings_Project.instance._iconProfile, ref _cachedProjectIcons);
+		}
+
+		private static IconGenContext GetUserIcons()
+		{
+			return GetIconsFromJSONPath(PVSettings_User.instance._iconProfile, ref _cachedUserIcons) ??
+			GetProjectIcons();
+		}
+
 		private static MenuGenContext GetProjectMenu()
 		{
 			return GetMenuFromJSON(PVSettings_Project.instance._menuProfile, ref _cachedProjectMenu);
 		}
-		
+
 		private static MenuGenContext GetUserMenu()
 		{
-			return GetMenuFromJSON(PVSettings_User.instance._menuProfile, ref _cachedUserMenu);
+			return GetMenuFromJSON(PVSettings_User.instance._menuProfile, ref _cachedUserMenu) ?? GetProjectMenu();
 		}
 
 		private static MenuGenContext PickMenu(EOverrideBehaviour b)
