@@ -275,7 +275,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public IReadOnlyList<string> menuItems { get; }
 		internal readonly MenuGenNode root = new(string.Empty);
-		internal readonly IconStore icons = new ();
+		internal readonly TexStore icons = new ();
 
 		private readonly IReadOnlyDictionary<string, object> _variables;
 

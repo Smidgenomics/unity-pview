@@ -19,12 +19,12 @@
 		},
 		"Assets/Settings;Assets/Config":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.375,0.5,0.125,0.125",
+			"uv":"35/8",
 			"bg":"0"
 		},
 		"Assets/Data;*/Resources":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.75,0.5,0.125,0.125",
+			"uv":"38/8",
 			"bg":"0"
 		},
 		"Assets/StreamingAssets":{
@@ -34,87 +34,87 @@
 		},
 		"Assets/ScriptTemplates":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.875,0.5,0.125,0.125",
+			"uv":"39/8",
 			"bg":"0"
 		},
 		"Assets/Developers":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.25,0.5,0.125,0.125",
+			"uv":"34/8",
 			"bg":"0"
 		},
 		"Assets/Content":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.125,0.5,0.125,0.125",
+			"uv":"33/8",
 			"bg":"0"
 		},
 		"Assets/Plugins":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.125,0.625,0.125,0.125",
+			"uv":"41/8",
 			"bg":"0"
 		},
 		"Assets/Gizmos":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.125,0.75,0.125,0.125",
+			"uv":"49/8",
 			"bg":"0"
 		},
 		"Assets/Standard Assets":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.125,0.625,0.125,0.125",
+			"uv":"41/8",
 			"bg":"0"
 		},
 		"f:^Packages\/([a-zA-Z_-]|\\d|\\.)+$":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.875,0.625,0.125,0.125",
+			"uv":"47/8",
 			"bg":"0"
 		},
 		"*/Prefabs":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.25,0.625,0.125,0.125",
+			"uv":"42/8",
 			"bg":"0"
 		},
 		"*/Materials":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.375,0.625,0.125,0.125",
+			"uv":"43/8",
 			"bg":"0"
 		},
 		"*/Textures":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.5,0.625,0.125,0.125",
+			"uv":"44/8",
 			"bg":"0"
 		},
 		"*/Audio":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.625,0.625,0.125,0.125",
+			"uv":"45/8",
 			"bg":"0"
 		},
 		"*/Shaders":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.75,0.625,0.125,0.125",
+			"uv":"46/8",
 			"bg":"0"
 		},
 		"*/Models":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0,0.625,0.125,0.125",
+			"uv":"40/8",
 			"bg":"0"
 		},
-		"*/Code;*/Runtime":{
+		"*/Code;*/Runtime;*/Scripts":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0,0.5,0.125,0.125",
+			"uv":"32/8",
 			"bg":"0"
 		},
 		"*/Editor":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.5,0.5,0.125,0.125",
+			"uv":"36/8",
 			"bg":"0"
 		},
 		"*/Scenes":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0.625,0.5,0.125,0.125",
+			"uv":"37/8",
 			"bg":"0"
 		},
 		"*/Tests":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
-			"uv":"0,0.75,0.125,0.125",
+			"uv":"48/8",
 			"bg":"0"
 		},
 		"*.md":{

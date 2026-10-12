@@ -16,6 +16,26 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			: dValue;
 		}
 		
+		public static SkinPick<T> ParseSkinValue<T>(string str, Func<string, T, T> fn, T dValue)
+		{
+			if (string.IsNullOrEmpty(str))
+			{
+				return dValue;
+			}
+			// return fn.Invoke(str, dValue);
+			if (str.Contains(';'))
+			{
+				var segs = str.Split(';');
+				if (segs.Length == 2)
+				{
+					var v1 = fn.Invoke(segs[0], dValue);
+					var v2 = fn.Invoke(segs[1], dValue);
+					return new(v1, v2);
+				}
+			}
+			return fn.Invoke(str, dValue);
+		}
+		
 		public static bool TryParseColor(string hexColor, out Color outColor)
 		{
 			// shorthand for empty

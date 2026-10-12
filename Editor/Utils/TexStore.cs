@@ -8,20 +8,20 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	using UnityEngine;
 
 	// key/value store for icons using guids or aliases
-	internal sealed class IconStore
+	internal sealed class TexStore
 	{
-		public Texture2D GetIconOrCached(string guidOrAlias)
+		public Texture2D GetIconOrCached(string guidOrAlias, Texture2D dValue = null)
 		{
-			if (guidOrAlias == null)
+			if (string.IsNullOrEmpty(guidOrAlias))
 			{
-				return null;
+				return dValue;
 			}
 			if (!_cachedIcons.TryGetValue(guidOrAlias, out var tex))
 			{
 				tex = LoadTex(guidOrAlias);
 				_cachedIcons.Add(guidOrAlias, tex);
 			}
-			return null;
+			return tex;
 		}
 
 		private readonly Dictionary<string, Texture2D> _cachedIcons = new();

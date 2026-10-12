@@ -22,13 +22,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				TweakLayoutSize(ref rect);
 			}
 			EditorGUI.DrawRect(rect, icon.bgColor);
-			var tint = icon.tint;
+			var tint = icon.tint.Value;
 			if (Mathf.Approximately(tint.a, 0f))
 			{
 				tint = Color.white;
 			}
 
-			var pos = icon.pos;
+			var pos = icon.pos.Value;
 			var ox = rect.width * pos.x;
 			var oy = rect.height * pos.y;
 

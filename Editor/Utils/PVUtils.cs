@@ -14,7 +14,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			var fPath = $"{PVConstants.PROJECT_ROOT}/{pPath}";
 			return File.Exists(fPath) ? File.ReadAllText(fPath) : null;
 		}
-
+		
 		public static Texture2D LoadTexture(string guidOrName)
 		{
 			if (string.IsNullOrEmpty(guidOrName))

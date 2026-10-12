@@ -22,7 +22,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 			if (defaults.folderIcon != null)
 			{
-				_defaultFolder = (true, defaults.folderIcon.LoadIcon());
+				_defaultFolder = (true, defaults.folderIcon.LoadIcon(_texStore));
 			}
 		}
 
@@ -74,8 +74,8 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				return;
 			}
 
-			var mainIcon = settings.LoadIcon();
-			var smallIcon = settings.smallVariant?.LoadIcon() ?? mainIcon;
+			var mainIcon = settings.LoadIcon(_texStore);
+			var smallIcon = settings.smallVariant?.LoadIcon(_texStore) ?? mainIcon;
 			if (rule.IsGUID32())
 			{
 				_guidIcons[rule] = (mainIcon, smallIcon);
@@ -155,6 +155,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		private Dictionary<string, (LoadedIcon, LoadedIcon)> _guidIcons = new();
 		private List<FilterInfo> _filters = new();
 		private List<(LoadedIcon, LoadedIcon)> _icons = new(); // normal/small
+		private readonly TexStore _texStore = new();
 
 		private static FilterFn GetPathFilterFn(string rule)
 		{

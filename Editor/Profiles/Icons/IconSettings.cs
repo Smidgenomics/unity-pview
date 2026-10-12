@@ -2,6 +2,7 @@
 
 namespace Smidgenomics.Unity.ProjectView.Editor
 {
+	using System;
 	using Newtonsoft.Json;
 	using UnityEngine;
 
@@ -9,18 +10,21 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 	{
 		public IconSettings smallVariant => _sm;
 
-		public LoadedIcon LoadIcon()
+		public LoadedIcon LoadIcon(TexStore texStore)
 		{
-			var bgColor = !string.IsNullOrEmpty(_bgColor) && PVParse.TryParseColor(_bgColor, out var pColor)
-			? new(pColor, pColor)
-			: UnityConstants.BrowserColor;
+			var bgColor = string.IsNullOrEmpty(_bgColor)
+			? UnityConstants.BrowserColor
+			: PVParse.ParseSkinValue(_bgColor, PVParse.ParseColor, Color.clear);
 
-			var pos = PVParse.ParseRect(_pos, new Rect(0, 0, 1f, 1f));
+			var pos = PVParse.ParseSkinValue(_pos, PVParse.ParseRect, new Rect(0, 0, 1f, 1f));
+			var uv = PVParse.ParseSkinValue(_uv, PVParse.ParseRect, new Rect(0, 0, 1f, 1f));
+			var tint = PVParse.ParseSkinValue(_tint, PVParse.ParseColor, Color.white);
+			var tex = PVParse.ParseSkinValue<Texture2D>(_iconGUID, texStore.GetIconOrCached, null);
 			return new LoadedIcon()
 			{
-				tint = PVParse.ParseColor(_tint, Color.white),
-				uv = PVParse.ParseRect(_uv, new Rect(0f, 0f, 1f, 1f)),
-				tex = PVUtils.LoadTexture(_iconGUID),
+				tint = tint,
+				uv = uv,
+				tex = tex,
 				bgColor = bgColor,
 				floatRight = _right,
 				pos = pos,

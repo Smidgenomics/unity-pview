@@ -19,10 +19,10 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 	internal struct LoadedIcon
 	{
-		public Texture2D tex;
-		public Color tint;
-		public Rect pos;
-		public Rect uv;
+		public SkinPick<Texture2D> tex;
+		public SkinPick<Color> tint;
+		public SkinPick<Rect> pos;
+		public SkinPick<Rect> uv;
 		public SkinPick<Color> bgColor;
 		public bool floatRight;
 	}
@@ -55,6 +55,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		public static implicit operator T(SkinPick<T> v) => v.Value;
 		public static implicit operator SkinPick<T>((T, T) val) => new(val.Item1, val.Item2);
+		public static implicit operator SkinPick<T>(T val) => new(val, val);
 
 		private readonly T _dValue, _lValue;
 	}
