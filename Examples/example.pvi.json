@@ -129,8 +129,8 @@
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"0/8",
 			"tint":"#ffffffbb",
-			"pos":"0.6,0.6,0.4,0.4",
-			"bg":"0",
+			"pos":"0.6,0.4",
+			"bg":"clear",
 			"sm":{
 				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 				"uv":"0/8",
@@ -141,8 +141,8 @@
 		"*.psd":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"1/8",
-			"pos":"0.6,0.6,0.4,0.4",
-			"bg":"transparent",
+			"pos":"0.6,0.4",
+			"bg":"clear",
 			"tint":"#ffffffbb",
 			"sm":{
 				"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",

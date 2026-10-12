@@ -103,19 +103,28 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 				var h = 1f / cellsX;
 				return new Rect(x * w, y * h, w, h);
 			}
-			
+
 			var vals = str.Split(',');
 
-			if (vals.Length != 4)
+			// offset,size
+			if (vals.Length == 2)
 			{
-				return defValue;
+				var xy = ParseFloat(vals[0], defValue.x);
+				var size = ParseFloat(vals[1], defValue.width);
+				return new Rect(xy, xy, size, size);
 			}
-			Rect outVal = default;
-			outVal.x = ParseFloat(vals[0], defValue.x);
-			outVal.y = ParseFloat(vals[1], defValue.y);
-			outVal.width = ParseFloat(vals[2], defValue.width);
-			outVal.height = ParseFloat(vals[3], defValue.height);
-			return outVal;
+
+			// x,y,w,h
+			if (vals.Length == 4)
+			{
+				Rect outVal = default;
+				outVal.x = ParseFloat(vals[0], defValue.x);
+				outVal.y = ParseFloat(vals[1], defValue.y);
+				outVal.width = ParseFloat(vals[2], defValue.width);
+				outVal.height = ParseFloat(vals[3], defValue.height);
+				return outVal;
+			}
+			return defValue;
 		}
 
 		public static MethodInfo ParseStaticMethodRef(string mRef, Type rType, Type[] pTypes)
