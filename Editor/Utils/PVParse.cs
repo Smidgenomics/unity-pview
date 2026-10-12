@@ -15,7 +15,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			? c
 			: dValue;
 		}
-		
+
 		public static SkinPick<T> ParseSkinValue<T>(string str, Func<string, T, T> fn, T dValue)
 		{
 			if (string.IsNullOrEmpty(str))
@@ -35,14 +35,32 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			return fn.Invoke(str, dValue);
 		}
-		
+
 		public static bool TryParseColor(string hexColor, out Color outColor)
 		{
+			if (string.IsNullOrEmpty(hexColor))
+			{
+				outColor = default;
+				return false;
+			}
+
 			// shorthand for empty
-			if (hexColor is { Length: 1 } && hexColor[0] == '0')
+			if (hexColor is "0" or "clear")
 			{
 				outColor = Color.clear;
 				return true;
+			}
+
+			// quick hack to allow #fff or #ffff shorthands which TryParseHtmlString seems to choke on
+			// note: will simply replace TryParseHtmlString with hex parsing when I cba
+			if (hexColor[0] == '#' && hexColor.Length is 4 or 5)
+			{
+				var newStr = "#";
+				foreach (var c in hexColor[1..])
+				{
+					newStr += $"{c}{c}";
+				}
+				hexColor = newStr;
 			}
 			return ColorUtility.TryParseHtmlString(hexColor, out outColor);
 		}
@@ -129,5 +147,31 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			return m;
 		}
+
+		public static int ParseHex(string str)
+		{
+			// handy approach courtesy of:
+			// https://stackoverflow.com/questions/74148/how-to-convert-numbers-between-hexadecimal-and-decimal/9126750#9126750
+			if (string.IsNullOrEmpty(str))
+			{
+				return 0;
+			}
+			int decValue = _HEX_TO_DEC[(byte)str[0]];
+			for (var i = 1; i < str.Length; i++)
+			{
+				decValue *= 16;
+				decValue += _HEX_TO_DEC[(byte)str[i]];
+			}
+			return decValue;
+		}
+
+		private static readonly sbyte[] _HEX_TO_DEC =
+		{
+			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7,
+			8, 9, -1, -1, -1, -1, -1, -1, -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1,
+			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+		};
 	}
 }

@@ -18,24 +18,13 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			}
 			if (!_cachedIcons.TryGetValue(guidOrAlias, out var tex))
 			{
-				tex = LoadTex(guidOrAlias);
+				tex = PVUtils.LoadTexture(guidOrAlias);
 				_cachedIcons.Add(guidOrAlias, tex);
 			}
 			return tex;
 		}
 
 		private readonly Dictionary<string, Texture2D> _cachedIcons = new();
-
-		private Texture2D LoadTex(string guidOrAlias)
-		{
-			// asset guid
-			if (guidOrAlias.IsGUID32())
-			{
-				var path = AssetDatabase.GUIDToAssetPath(guidOrAlias);
-				return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-			}
-			return EditorGUIUtility.IconContent(guidOrAlias)?.image as Texture2D;
-		}
 	}
 
 }

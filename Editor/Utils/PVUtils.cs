@@ -14,27 +14,42 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			var fPath = $"{PVConstants.PROJECT_ROOT}/{pPath}";
 			return File.Exists(fPath) ? File.ReadAllText(fPath) : null;
 		}
-		
-		public static Texture2D LoadTexture(string guidOrName)
+
+		// load texture by guid, name (internal editor icon), or asset path
+		public static Texture2D LoadTexture(string guidOrNameOrPath)
 		{
-			if (string.IsNullOrEmpty(guidOrName))
+			if (string.IsNullOrEmpty(guidOrNameOrPath))
 			{
 				return null;
 			}
-			if (guidOrName.IsGUID32())
+			if (guidOrNameOrPath.IsGUID32())
 			{
-				return AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath(guidOrName));
+				return AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath(guidOrNameOrPath));
+			}
+			
+			// Assets/ or Packages/ supported
+			if (guidOrNameOrPath.Contains('/'))
+			{
+				return RelativePathExists(guidOrNameOrPath)
+				? AssetDatabase.LoadAssetAtPath<Texture2D>(guidOrNameOrPath)
+				: null;
 			}
 
 			try
 			{
-				return EditorGUIUtility.IconContent(guidOrName)?.image as Texture2D;
+				return EditorGUIUtility.IconContent(guidOrNameOrPath)?.image as Texture2D;
 			}
 			catch (Exception e)
 			{
-				Debug.LogError($"Error parsing icon ref '{guidOrName}': '{e.Message}'");
+				Debug.LogError($"Error parsing icon ref '{guidOrNameOrPath}': '{e.Message}'");
 				return null;
 			}
+		}
+
+		public static bool RelativePathExists(string path)
+		{
+			var absPath = $"{PVConstants.PROJECT_ROOT}/{path}";
+			return File.Exists(absPath);
 		}
 	}
 }
