@@ -1,6 +1,6 @@
 {
   "name": "com.smidgenomics.unity-pview",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "displayName": "SM Project View",
   "description": "Project view customization. Customize context menus and project view icons.",
   "repository": {

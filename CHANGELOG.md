@@ -1,5 +1,22 @@
 
-# 0.3.0
+# 0.4.0 - 14/10/26
+
+## Added
+
+* New shorthand for rect values in JSON: `xy/size` -> `new Rect(xy,xy,size,size)`
+* Support for setting editor skin variants for icon JSON props: `<lvalue>;<dvalue>` 
+* Support for referencing icons by asset path.
+
+## Changed
+
+* Default to using project profile for icons if user profile is not set and not icons are not explicitly disabled.
+
+## Other
+
+* Updated example icons.
+
+
+# 0.3.0 - 11/10/26
 
 Note: Includes breaking changes to API.
 
@@ -33,7 +50,7 @@ Note: Includes breaking changes to API.
 * Misc. stabilizations and refactor.
 * Example json profiles and icon atlas.
 
-# 0.2.0
+# 0.2.0 - 06/10/26
 
 ## Changed
 
