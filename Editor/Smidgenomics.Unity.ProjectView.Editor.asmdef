@@ -9,7 +9,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "SM_PV.Newtonsoft.Json.dll"
+        "Smidgenomics.Unity.PView.Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [
