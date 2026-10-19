@@ -118,7 +118,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 			_paths = new List<(string, long)>();
 			foreach (var relPath in filePaths)
 			{
-				var absPath = $"{PVConstants.PROJECT_ROOT}/{relPath}";
+				var absPath = Path.GetFullPath(relPath);
 				if (!File.Exists(absPath))
 				{
 					continue;

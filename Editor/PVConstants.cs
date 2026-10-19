@@ -22,5 +22,7 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 
 		// package.json
 		public const string PACKAGE_MANIFEST_GUID = "97184eaee0a5be44689988835a35edc8";
+
+		public const string EX_FOLDER_PATH = "Packages/com.smidgenomics.unity-pview/Examples";
 	}
 }
