@@ -15,11 +15,11 @@ namespace Smidgenomics.Unity.ProjectView.Editor
 		[Header("Project Browser")]
 		[FieldLabel("Context Menu")]
 		[ProjectFile("*.pvm.json", "ProjectSettings/pview", PVConstants.EX_FOLDER_PATH)]
-		[SerializeField] internal string _menuProfile = PVConstants.EX_FOLDER_PATH + "example.pvm.json";
+		[SerializeField] internal string _menuProfile = PVConstants.EX_FOLDER_PATH + "/example.pvm.json";
 
 		[FieldLabel("Icons")]
 		[ProjectFile("*.pvi.json", "ProjectSettings/pview", PVConstants.EX_FOLDER_PATH)]
-		[SerializeField] internal string _iconProfile = PVConstants.EX_FOLDER_PATH + "example.pvi.json";
+		[SerializeField] internal string _iconProfile = PVConstants.EX_FOLDER_PATH + "/example.pvi.json";
 
 		[StaticAction("User Settings")]
 		private static void OpenUserSettings() => ProjectView.OpenUserPrefs();
