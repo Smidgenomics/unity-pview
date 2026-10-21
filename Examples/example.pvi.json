@@ -72,6 +72,11 @@
 			"uv":"41/8",
 			"bg":"0"
 		},
+		"Assets/Unity.VisualScripting.Generated":{
+			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
+			"uv":"37/8",
+			"bg":"0"
+		},
 		"f:^Packages\/([a-zA-Z_-]|\\d|\\.)+$":{
 			"tex":"6b81a298a57bf9f43ad5313e72ae9f1e",
 			"uv":"47/8",
